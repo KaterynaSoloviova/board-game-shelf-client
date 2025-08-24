@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Title,
@@ -19,79 +20,61 @@ import {
   Grid,
   Box,
   Paper,
-  rem
-} from '@mantine/core';
-import { IconSearch, IconFilter, IconUsers, IconClock, IconX } from '@tabler/icons-react';
-
-// Types based on your Prisma schema
-interface Session {
-  id: string;
-  date: Date;
-  notes?: string;
-  gameId: string;
-  createdAt: Date;
-}
-
-interface Game {
-  id: string;
-  title: string;
-  genre: string;
-  minPlayers: number;
-  maxPlayers: number;
-  playTime: number;
-  publisher: string;
-  age: string;
-  rating: number;
-  coverImage: string;
-  isOwned: boolean;
-  sessions: Session[];
-  myRating?: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Mock data - replace with your API calls
-const mockGames: Game[] = [
-  {
-    id: '1',
-    title: 'Brass: Birmingham',
-    genre: 'Strategy',
-    minPlayers: 2,
-    maxPlayers: 4,
-    playTime: 120,
-    publisher: 'Roxley Games',
-    age: '14+',
-    rating: 8.6,
-    coverImage: '/images/games/brass-birmingham.jpg', // Update with your image paths
-    isOwned: true,
-    myRating: 9,
-    sessions: [
-      { id: '1', date: new Date(), gameId: '1', createdAt: new Date() },
-      { id: '2', date: new Date(), gameId: '1', createdAt: new Date() }
-    ],
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  // Add more games...
-];
+  rem,
+} from "@mantine/core";
+import {
+  IconSearch,
+  IconFilter,
+  IconUsers,
+  IconClock,
+  IconX,
+} from "@tabler/icons-react";
+import { Game, Tag } from "../interfaces";
+import axios from "axios";
+import { BASE_URL } from "../config";
 
 interface GameCardProps {
   game: Game;
+  onClick: (gameId: string) => void;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ game }) => {
+const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
   const formatPlayerCount = (min: number, max: number): string => {
-    return min === max ? `${min} Player${min > 1 ? 's' : ''}` : `${min}–${max} Players`;
+    return min === max
+      ? `${min} Player${min > 1 ? "s" : ""}`
+      : `${min}–${max} Players`;
+  };
+
+  const safeGame = {
+    id: game?.id || "",
+    title: game?.title || "Unknown Game",
+    rating: game?.rating || 0,
+    minPlayers: game?.minPlayers || 1,
+    maxPlayers: game?.maxPlayers || 1,
+    playTime: game?.playTime || 0,
+    age: game?.age || "Unknown",
+    genre: game?.genre || "Unknown",
+    publisher: game?.publisher || "Unknown",
+    coverImage: game?.coverImage || "",
+    myRating: game?.myRating,
+    sessions: game?.sessions || [],
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+      style={{ cursor: "pointer" }}
+      onClick={() => onClick(safeGame.id)}
+    >
       <Flex gap="md">
         {/* Game Cover Image */}
         <Box style={{ flexShrink: 0 }}>
           <Image
-            src={game.coverImage}
-            alt={game.title}
+            src={safeGame.coverImage}
+            alt={safeGame.title}
             width={96}
             height={128}
             radius="sm"
@@ -104,10 +87,10 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
           {/* Title and BGG Rating */}
           <Flex justify="space-between" align="flex-start" gap="md">
             <Title order={4} lineClamp={2} style={{ flex: 1 }}>
-              {game.title}
+              {safeGame.title}
             </Title>
             <Badge color="green" variant="filled" size="lg">
-              {game.rating.toFixed(1)}
+              {safeGame.rating.toFixed(1)}
             </Badge>
           </Flex>
 
@@ -116,46 +99,65 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
             <Group gap="xs">
               <IconUsers style={{ width: rem(16), height: rem(16) }} />
               <Text size="sm" c="dimmed">
-                {formatPlayerCount(game.minPlayers, game.maxPlayers)}
+                {formatPlayerCount(safeGame.minPlayers, safeGame.maxPlayers)}
               </Text>
             </Group>
             <Group gap="xs">
               <IconClock style={{ width: rem(16), height: rem(16) }} />
               <Text size="sm" c="dimmed">
-                {game.playTime} Min
+                {safeGame.playTime} Min
               </Text>
             </Group>
             <Text size="sm" c="dimmed">
-              Age: {game.age}
+              Age: {safeGame.age}
             </Text>
           </Group>
 
           {/* Genre and Publisher */}
           <Stack gap={4}>
             <Group gap="xs">
-              <Text size="sm" fw={500}>Genre:</Text>
-              <Text size="sm" c="dimmed">{game.genre}</Text>
+              <Text size="sm" fw={500}>
+                Genre:
+              </Text>
+              <Text size="sm" c="dimmed">
+                {safeGame.genre}
+              </Text>
             </Group>
             <Group gap="xs">
-              <Text size="sm" fw={500}>Publisher:</Text>
-              <Text size="sm" c="dimmed">{game.publisher}</Text>
+              <Text size="sm" fw={500}>
+                Publisher:
+              </Text>
+              <Text size="sm" c="dimmed">
+                {safeGame.publisher}
+              </Text>
             </Group>
           </Stack>
 
           {/* My Rating */}
-          {game.myRating && (
+          {typeof safeGame.myRating === "number" && safeGame.myRating > 0 && (
             <Group gap="xs">
-              <Text size="sm" fw={500}>My Rating:</Text>
-              <Rating value={game.myRating / 2} fractions={2} readOnly size="sm" />
-              <Text size="sm" c="dimmed">({game.myRating}/10)</Text>
+              <Text size="sm" fw={500}>
+                My Rating:
+              </Text>
+              <Rating
+                value={safeGame.myRating / 2}
+                fractions={2}
+                readOnly
+                size="sm"
+              />
+              <Text size="sm" c="dimmed">
+                ({safeGame.myRating}/10)
+              </Text>
             </Group>
           )}
 
           {/* Sessions Count */}
           <Group gap="xs">
-            <Text size="sm" fw={500}>Sessions:</Text>
+            <Text size="sm" fw={500}>
+              Sessions:
+            </Text>
             <Badge variant="light" size="sm">
-              {game.sessions.length}
+              {safeGame.sessions.length}
             </Badge>
           </Group>
         </Stack>
@@ -165,65 +167,123 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
 };
 
 const MyGames: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedGenre, setSelectedGenre] = useState<string | null>('');
-  const [selectedPlayers, setSelectedPlayers] = useState<string | null>('');
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [selectedPlayers, setSelectedPlayers] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get unique genres
-  const genres = useMemo(() => 
-    [...new Set(mockGames.map(game => game.genre))].sort()
-  , []);
+  useEffect(() => {
+    axios
+      .get(`${BASE_URL}/api/games/`)
+      .then((res) => {
+        setGames(res.data);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  // Filter games
-  const filteredGames = useMemo(() => {
-    return mockGames.filter(game => {
-      const matchesSearch = searchTerm === '' || 
-        game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        game.genre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        game.publisher.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesGenre = !selectedGenre || game.genre === selectedGenre;
-      
-      let matchesPlayers = true;
-      if (selectedPlayers) {
-        switch (selectedPlayers) {
-          case '1':
-            matchesPlayers = game.minPlayers <= 1 && game.maxPlayers >= 1;
-            break;
-          case '2':
-            matchesPlayers = game.minPlayers <= 2 && game.maxPlayers >= 2;
-            break;
-          case '3':
-            matchesPlayers = game.minPlayers <= 3 && game.maxPlayers >= 3;
-            break;
-          case '4+':
-            matchesPlayers = game.maxPlayers >= 4;
-            break;
-        }
-      }
-      
-      return matchesSearch && matchesGenre && matchesPlayers && game.isOwned;
-    });
-  }, [searchTerm, selectedGenre, selectedPlayers]);
+  // filter data
+  const genres = useMemo(
+    () => [...new Set(games.map((game) => game.genre))].sort(),
+    [games]
+  );
 
-  const handleClearFilters = (): void => {
-    setSelectedGenre('');
-    setSelectedPlayers('');
-    setSearchTerm('');
-  };
+  const tags = useMemo(
+    () =>
+      [
+        ...new Set(
+          games.flatMap((game) => game.tags?.map((tag: Tag) => tag.title) || [])
+        ),
+      ].sort(),
+    [games]
+  );
 
-  const genreSelectData = genres.map(genre => ({
+  // options for dropdowns
+
+  const genreSelectData = genres.map((genre) => ({
     value: genre,
-    label: genre
+    label: genre,
+  }));
+
+  const tagSelectData = tags.map((tag) => ({
+    value: tag,
+    label: tag,
   }));
 
   const playerSelectData = [
-    { value: '1', label: '1 Player' },
-    { value: '2', label: '2 Players' },
-    { value: '3', label: '3 Players' },
-    { value: '4+', label: '4+ Players' }
+    { value: "1", label: "1 Player" },
+    { value: "2", label: "2 Players" },
+    { value: "3", label: "3 Players" },
+    { value: "4", label: "4 Players" },
+    { value: "5", label: "5 Players" },
+    { value: "6", label: "6 Players" },
+    { value: "7", label: "7 Players" },
+    { value: "8+", label: "8+ Players" },
   ];
+
+  // Filtering games
+  const filteredGames = useMemo(() => {
+    return games.filter((game) => {
+      const matchesSearch =
+        searchTerm === "" ||
+        game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        game.genre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        game.publisher.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesGenre = !selectedGenre || game.genre === selectedGenre;
+
+      let matchesPlayers = true;
+      if (selectedPlayers) {
+        if (selectedPlayers === "1") {
+          matchesPlayers = game.minPlayers <= 1 && game.maxPlayers >= 1;
+        } else if (selectedPlayers === "2") {
+          matchesPlayers = game.minPlayers <= 2 && game.maxPlayers >= 2;
+        } else if (selectedPlayers === "3") {
+          matchesPlayers = game.minPlayers <= 3 && game.maxPlayers >= 3;
+        } else if (selectedPlayers === "4") {
+          matchesPlayers = game.minPlayers <= 4 && game.maxPlayers >= 4;
+        } else if (selectedPlayers === "5") {
+          matchesPlayers = game.minPlayers <= 5 && game.maxPlayers >= 5;
+        } else if (selectedPlayers === "6") {
+          matchesPlayers = game.minPlayers <= 6 && game.maxPlayers >= 6;
+        } else if (selectedPlayers === "7") {
+          matchesPlayers = game.minPlayers <= 7 && game.maxPlayers >= 7;
+        } else if (selectedPlayers === "8+") {
+          matchesPlayers = game.maxPlayers >= 8;
+        }
+      }
+
+      const matchesTags =
+        selectedTags.length === 0 ||
+        selectedTags.every((tag) =>
+          game.tags.some((gameTag: Tag) => gameTag.title === tag)
+        );
+
+      return (
+        matchesSearch &&
+        matchesGenre &&
+        matchesPlayers &&
+        matchesTags &&
+        game.isOwned
+      );
+    });
+  }, [games, searchTerm, selectedGenre, selectedPlayers, selectedTags]);
+
+  // Handle game card click
+  const handleGameClick = (gameId: string) => {
+    navigate(`/game/${gameId}`);
+  };
+
+  // reset filter
+  const handleClearFilters = () => {
+    void setSelectedGenre(null);
+    void setSelectedPlayers(null);
+    void setSelectedTags([]);
+    void setSearchTerm("");
+  };
 
   return (
     <Box bg="gray.0" mih="100vh">
@@ -233,7 +293,8 @@ const MyGames: React.FC = () => {
           <Flex justify="space-between" align="center">
             <Title order={1}>My Games</Title>
             <Text c="dimmed">
-              {filteredGames.length} game{filteredGames.length !== 1 ? 's' : ''} in collection
+              {filteredGames.length} game{filteredGames.length !== 1 ? "s" : ""}{" "}
+              in collection
             </Text>
           </Flex>
         </Container>
@@ -247,13 +308,15 @@ const MyGames: React.FC = () => {
             placeholder="Search games by title, genre, or publisher..."
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.currentTarget.value)}
-            leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={
+              <IconSearch style={{ width: rem(16), height: rem(16) }} />
+            }
             rightSection={
               searchTerm && (
                 <ActionIcon
                   variant="subtle"
                   c="dimmed"
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => setSearchTerm("")}
                 >
                   <IconX style={{ width: rem(16), height: rem(16) }} />
                 </ActionIcon>
@@ -265,11 +328,13 @@ const MyGames: React.FC = () => {
           {/* Filter Toggle */}
           <Button
             variant="subtle"
-            leftSection={<IconFilter style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={
+              <IconFilter style={{ width: rem(16), height: rem(16) }} />
+            }
             onClick={() => setShowFilters(!showFilters)}
             mb="md"
           >
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
+            {showFilters ? "Hide Filters" : "Show Filters"}
           </Button>
 
           {/* Filters */}
@@ -298,12 +363,11 @@ const MyGames: React.FC = () => {
                 />
               </Grid.Col>
 
-              <Grid.Col span={{ base: 12, sm: 6, md: 4 }} style={{ display: 'flex', alignItems: 'end' }}>
-                <Button
-                  variant="light"
-                  fullWidth
-                  onClick={handleClearFilters}
-                >
+              <Grid.Col
+                span={{ base: 12, sm: 6, md: 4 }}
+                style={{ display: "flex", alignItems: "end" }}
+              >
+                <Button variant="light" fullWidth onClick={handleClearFilters}>
                   Clear Filters
                 </Button>
               </Grid.Col>
@@ -316,15 +380,21 @@ const MyGames: React.FC = () => {
           {filteredGames.length === 0 ? (
             <Paper shadow="sm" p="xl" radius="md">
               <Stack align="center" gap="xs">
-                <Text size="lg" c="dimmed">No games found</Text>
+                <Text size="lg" c="dimmed">
+                  No games found
+                </Text>
                 <Text size="sm" c="dimmed">
                   Try adjusting your search or filters
                 </Text>
               </Stack>
             </Paper>
           ) : (
-            filteredGames.map(game => (
-              <GameCard key={game.id} game={game} />
+            filteredGames.map((game) => (
+              <GameCard
+                key={game?.id || Math.random()}
+                game={game}
+                onClick={handleGameClick}
+              />
             ))
           )}
         </Stack>
