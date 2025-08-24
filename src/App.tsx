@@ -16,7 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/games" element={<MyGames />} />
-            <Route path="/game/:id" element={<GameDetailsPage />} />
+            <Route path="/game/:gameId" element={<GameDetailsPage />} />
           </Routes>
           <Footer />
         </MantineProvider>

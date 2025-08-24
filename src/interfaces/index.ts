@@ -4,6 +4,7 @@ export interface Session {
   notes?: string;
   gameId: string;
   createdAt: Date;
+  players: Player[];
 }
 
 export interface Game {
@@ -30,3 +31,16 @@ export interface Tag {
   title: string;
   games: Game[];
 }
+
+export interface Player {
+  id: string;
+  name: string;
+}
+
+export interface File {
+  id: string;
+  title: string;
+  link: string;
+}
+
+

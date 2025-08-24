@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   Select,
+  MultiSelect,
   Button,
   Card,
   Image,
@@ -133,23 +134,24 @@ const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
             </Group>
           </Stack>
 
-          {/* My Rating */}
-          {typeof safeGame.myRating === "number" && safeGame.myRating > 0 && (
-            <Group gap="xs">
-              <Text size="sm" fw={500}>
-                My Rating:
-              </Text>
+          {/* My Rating Stars at Bottom */}
+          <Group position="left" spacing="xs" mt="sm">
+            <Text size="sm" fw={500}>
+              My Rating:
+            </Text>
+            {typeof safeGame.myRating === "number" && safeGame.myRating > 0 ? (
               <Rating
-                value={safeGame.myRating / 2}
-                fractions={2}
+                value={safeGame.myRating / 2} // Convert 1–10 to 0–5 stars
+                fractions={2} // Show half stars
                 readOnly
                 size="sm"
               />
+            ) : (
               <Text size="sm" c="dimmed">
-                ({safeGame.myRating}/10)
+                Not rated yet
               </Text>
-            </Group>
-          )}
+            )}
+          </Group>
 
           {/* Sessions Count */}
           <Group gap="xs">
@@ -341,7 +343,7 @@ const MyGames: React.FC = () => {
           <Collapse in={showFilters}>
             <Divider mb="md" />
             <Grid>
-              <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+              <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
                 <Select
                   label="Genre"
                   placeholder="All Genres"
@@ -352,7 +354,7 @@ const MyGames: React.FC = () => {
                 />
               </Grid.Col>
 
-              <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+              <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
                 <Select
                   label="Player Count"
                   placeholder="Any Player Count"
@@ -363,8 +365,20 @@ const MyGames: React.FC = () => {
                 />
               </Grid.Col>
 
+              <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+                <MultiSelect
+                  label="Tags"
+                  placeholder="Select tags..."
+                  data={tagSelectData}
+                  value={selectedTags}
+                  onChange={setSelectedTags}
+                  clearable
+                  searchable
+                />
+              </Grid.Col>
+
               <Grid.Col
-                span={{ base: 12, sm: 6, md: 4 }}
+                span={{ base: 12, sm: 6, md: 3 }}
                 style={{ display: "flex", alignItems: "end" }}
               >
                 <Button variant="light" fullWidth onClick={handleClearFilters}>
