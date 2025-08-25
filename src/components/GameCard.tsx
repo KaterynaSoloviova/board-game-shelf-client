@@ -12,12 +12,15 @@ import {
   Rating,
   Box,
   rem,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconUsers,
   IconClock,
-  IconX,
-  IconEdit,
+  IconTrash,
+  IconPencil,
+  IconStar,
+  IconCalendarEvent,
 } from "@tabler/icons-react";
 import { Game, Tag } from "../interfaces";
 
@@ -26,13 +29,20 @@ interface GameCardProps {
   onClick: (gameId: string) => void;
   onDelete: (gameId: string) => void;
   onEdit?: (gameId: string) => void;
+  accentColor?: string;
+  mutedColor?: string;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({ game, onClick, onDelete, onEdit }) => {
+export const GameCard: React.FC<GameCardProps> = ({
+  game,
+  onClick,
+  onDelete,
+  onEdit,
+  accentColor = "#a87e5b",
+  mutedColor = "#8c947d",
+}) => {
   const formatPlayerCount = (min: number, max: number): string => {
-    return min === max
-      ? `${min} Player${min > 1 ? "s" : ""}`
-      : `${min}–${max} Players`;
+    return min === max ? `${min}` : `${min}–${max}`;
   };
 
   const safeGame = {
@@ -42,171 +52,158 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onClick, onDelete, onE
     minPlayers: game?.minPlayers || 1,
     maxPlayers: game?.maxPlayers || 1,
     playTime: game?.playTime || 0,
-    age: game?.age || "Unknown",
+    age: game?.age || "N/A",
     genre: game?.genre || "Unknown",
     publisher: game?.publisher || "Unknown",
     coverImage: game?.coverImage || "",
     myRating: game?.myRating,
     sessions: game?.sessions || [],
     tags: game?.tags || [],
+    isOwned: game?.isOwned || false,
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(safeGame.id);
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) onEdit(safeGame.id);
   };
 
   return (
     <Card
       shadow="sm"
-      padding="lg"
+      padding="md"
       radius="md"
       withBorder
-      style={{ cursor: "pointer" }}
+      style={{
+        cursor: "pointer",
+        transition: "transform 150ms ease, box-shadow 150ms ease",
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+      sx={{
+        "&:hover": {
+          transform: "translateY(-2px)",
+          boxShadow: "md",
+        },
+      }}
       onClick={() => onClick(safeGame.id)}
     >
-      <Flex gap="md">
-        {/* Game Cover Image */}
-        <Box style={{ flexShrink: 0 }}>
-          <Image
-            src={safeGame.coverImage}
-            alt={safeGame.title}
-            width={96}
-            height={128}
-            radius="sm"
-            fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgOTYgMTI4IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iOTYiIGhlaWdodD0iMTI4IiBmaWxsPSIjRTJFOEYwIi8+CjxwYXRoIGQ9Ik00OCA2NEw2NCA0OEg4MFY4MEg2NEw0OCA2NFoiIGZpbGw9IiM3MTgwOTYiLz4KPHN2Zz4K"
-          />
-        </Box>
+      <Box style={{ position: "relative" }}>
+        <Image
+          src={safeGame.coverImage}
+          alt={safeGame.title}
+          height={rem(200)}
+          fit="cover"
+          radius="md"
+          fallbackSrc="https://via.placeholder.com/150"
+        />
+        <Group
+          gap="xs"
+          style={{
+            position: "absolute",
+            top: rem(8),
+            right: rem(8),
+            background: "rgba(255, 255, 255, 0.8)",
+            borderRadius: rem(4),
+            padding: `2px ${rem(4)}`,
+          }}
+        >
+          <IconStar size={14} color={mutedColor} />
+          <Text size="sm" c={mutedColor} fw={500}>
+            {safeGame.rating.toFixed(1)}
+          </Text>
+        </Group>
+        {safeGame.isOwned && (
+          <Badge
+            color="green"
+            variant="light"
+            style={{ position: "absolute", bottom: rem(8), left: rem(8) }}
+          >
+            Owned
+          </Badge>
+        )}
+      </Box>
 
-        {/* Game Details */}
-        <Stack style={{ flex: 1 }} gap="xs">
-          {/* Title and BGG Rating */}
-          <Flex justify="space-between" align="center" gap="md">
-            {/* Title + Rating */}
-            <Flex align="center" gap="sm" style={{ flex: 1 }}>
-              <Title order={4} lineClamp={2}>
-                {safeGame.title}
-              </Title>
-              <Badge color="green" variant="filled" size="lg">
-                {safeGame.rating.toFixed(1)}
-              </Badge>
-            </Flex>
+      <Stack gap="sm" style={{ flexGrow: 1 }}>
+        <Title order={4} lineClamp={2}>
+          {safeGame.title}
+        </Title>
 
-            {/* Delete Button */}
-            <ActionIcon
-              color="red"
-              variant="light"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent card click navigation
-                onDelete(safeGame.id); // Call the delete function
-              }}
-            >
-              <IconX style={{ width: rem(20), height: rem(20) }} />
-            </ActionIcon>
-          </Flex>
-
-          {/* Game Info Icons */}
-          <Group gap="lg">
-            <Group gap="xs">
-              <IconUsers style={{ width: rem(16), height: rem(16) }} />
-              <Text size="sm" c="dimmed">
-                {formatPlayerCount(safeGame.minPlayers, safeGame.maxPlayers)}
-              </Text>
-            </Group>
-            <Group gap="xs">
-              <IconClock style={{ width: rem(16), height: rem(16) }} />
-              <Text size="sm" c="dimmed">
-                {safeGame.playTime} Min
-              </Text>
-            </Group>
+        <Group gap="sm">
+          <Group gap={rem(4)}>
+            <IconUsers size={16} stroke={1.5} color={mutedColor} />
             <Text size="sm" c="dimmed">
-              Age: {safeGame.age}
+              {formatPlayerCount(safeGame.minPlayers, safeGame.maxPlayers)}
             </Text>
           </Group>
-
-          {/* Genre and Publisher */}
-          <Stack gap={4}>
-            <Group gap="xs">
-              <Text size="sm" fw={500}>
-                Genre:
-              </Text>
-              <Text size="sm" c="dimmed">
-                {safeGame.genre}
-              </Text>
-            </Group>
-            <Group gap="xs">
-              <Text size="sm" fw={500}>
-                Publisher:
-              </Text>
-              <Text size="sm" c="dimmed">
-                {safeGame.publisher}
-              </Text>
-            </Group>
-          </Stack>
-
-          {/* My Rating Stars at Bottom */}
-          <Group mt="sm">
-            <Text size="sm" fw={500}>
-              My Rating:
+          <Group gap={rem(4)}>
+            <IconClock size={16} stroke={1.5} color={mutedColor} />
+            <Text size="sm" c="dimmed">
+              {safeGame.playTime} Min
             </Text>
-            {typeof safeGame.myRating === "number" && safeGame.myRating > 0 ? (
-              <Rating
-                value={safeGame.myRating} 
-                fractions={2} 
-                readOnly
-                size="sm"
-              />
-            ) : (
-              <Text size="sm" c="dimmed">
-                Not rated yet
-              </Text>
-            )}
           </Group>
-
-          {/* Sessions Count */}
-          <Group gap="xs">
-            <Text size="sm" fw={500}>
-              Sessions:
+          <Group gap={rem(4)}>
+            <IconCalendarEvent size={16} stroke={1.5} color={mutedColor} />
+            <Text size="sm" c="dimmed">
+              {safeGame.sessions.length} sessions
             </Text>
-            <Badge variant="light" size="sm">
-              {safeGame.sessions.length}
+          </Group>
+        </Group>
+
+        <Group gap="xs" wrap="wrap">
+          <Badge color="gray" variant="light" size="sm">
+            {safeGame.genre}
+          </Badge>
+          {safeGame.tags?.slice(0, 3).map((tag: Tag, index: number) => (
+            <Badge key={tag.id || index} color="gray" variant="light" size="sm">
+              {tag.title}
             </Badge>
-          </Group>
-
-          {/* Tags */}
-          {safeGame.tags && safeGame.tags.length > 0 && (
-            <Group gap="xs">
-              <Text size="sm" fw={500}>
-                Tags:
-              </Text>
-              <Group gap="xs" wrap="wrap">
-                {safeGame.tags.map((tag: Tag, index: number) => (
-                  <Badge
-                    key={tag.id || index}
-                    variant="dot"
-                    size="xs"
-                    color="blue"
-                  >
-                    {tag.title}
-                  </Badge>
-                ))}
-              </Group>
-            </Group>
+          ))}
+          {safeGame.tags.length > 3 && (
+            <Badge color="gray" variant="light" size="sm">
+              +{safeGame.tags.length - 3}
+            </Badge>
           )}
+        </Group>
 
-          {/* Edit Button - Bottom Right */}
-          {onEdit && (
-            <Group justify="flex-end" mt="md">
-              <ActionIcon
-                color="blue"
-                variant="light"
-                size="md"
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click navigation
-                  onEdit(safeGame.id); // Call the edit function
-                }}
-                title="Edit Game"
-              >
-                <IconEdit style={{ width: rem(18), height: rem(18) }} />
-              </ActionIcon>
-            </Group>
+        <Box mt="auto">
+          <Text size="sm" c="dimmed" mb={rem(4)}>
+            My Rating:
+          </Text>
+          {typeof safeGame.myRating === "number" && safeGame.myRating > 0 ? (
+            <Rating
+              value={safeGame.myRating}
+              fractions={2}
+              readOnly
+              size="sm"
+              color={accentColor}
+            />
+          ) : (
+            <Text size="sm" c="dimmed">
+              Not rated yet
+            </Text>
           )}
-        </Stack>
+        </Box>
+      </Stack>
+
+      <Flex justify="flex-end" gap="xs" mt="md">
+        {onEdit && (
+          <Tooltip label="Edit Game">
+            <ActionIcon variant="subtle" color="gray" onClick={handleEditClick}>
+              <IconPencil size={20} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+        )}
+        <Tooltip label="Delete Game" color="red">
+          <ActionIcon variant="subtle" color="red" onClick={handleDeleteClick}>
+            <IconTrash size={20} stroke={1.5} />
+          </ActionIcon>
+        </Tooltip>
       </Flex>
     </Card>
   );

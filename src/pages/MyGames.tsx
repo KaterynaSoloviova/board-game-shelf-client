@@ -18,6 +18,8 @@ import {
   Paper,
   Group,
   rem,
+  Loader,
+  Center,
 } from "@mantine/core";
 import { IconSearch, IconFilter, IconX } from "@tabler/icons-react";
 import { Game, Tag } from "../interfaces";
@@ -36,18 +38,25 @@ const MyGames: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // New color palette based on the board game shelf image
+  const brandColors = {
+    beige: "#e0d9c4",
+    lightBrown: "#c5b79d",
+    mutedGreen: "#8c947d",
+    darkBrown: "#635841",
+    accent: "#a87e5b",
+  };
+
   const fetchGames = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}/api/games/`);
       console.log("Fetched games:", response.data);
-      
-      // Fetch sessions for each game individually
+
       const gamesWithSessions = await Promise.all(
         response.data.map(async (game: Game) => {
           try {
             const sessionsResponse = await axios.get(`${BASE_URL}/api/games/${game.id}/sessions`);
-            console.log(`Game ${game.title} sessions:`, sessionsResponse.data);
             return {
               ...game,
               sessions: sessionsResponse.data || []
@@ -61,8 +70,7 @@ const MyGames: React.FC = () => {
           }
         })
       );
-      
-      console.log("Games with sessions:", gamesWithSessions);
+
       setGames(gamesWithSessions);
     } catch (error) {
       console.error("Failed to fetch games:", error);
@@ -73,14 +81,8 @@ const MyGames: React.FC = () => {
 
   useEffect(() => {
     fetchGames();
-  }, []);
-
-  // Refresh games when user navigates back to this page
-  useEffect(() => {
-    fetchGames();
   }, [location.pathname]);
 
-  // filter data
   const genres = useMemo(
     () => [...new Set(games.map((game) => game.genre))].sort(),
     [games]
@@ -95,8 +97,6 @@ const MyGames: React.FC = () => {
       ].sort(),
     [games]
   );
-
-  // options for dropdowns
 
   const genreSelectData = genres.map((genre) => ({
     value: genre,
@@ -119,7 +119,6 @@ const MyGames: React.FC = () => {
     { value: "8+", label: "8+ Players" },
   ];
 
-  // Filtering games
   const filteredGames = useMemo(() => {
     return games.filter((game) => {
       const matchesSearch =
@@ -127,7 +126,6 @@ const MyGames: React.FC = () => {
         game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         game.genre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         game.publisher.toLowerCase().includes(searchTerm.toLowerCase());
-
       const matchesGenre = !selectedGenre || game.genre === selectedGenre;
 
       let matchesPlayers = true;
@@ -167,20 +165,17 @@ const MyGames: React.FC = () => {
     });
   }, [games, searchTerm, selectedGenre, selectedPlayers, selectedTags]);
 
-  // Handle game card click
   const handleGameClick = (gameId: string) => {
     navigate(`/game/${gameId}`);
   };
 
-  // reset filter
   const handleClearFilters = () => {
-    void setSelectedGenre(null);
-    void setSelectedPlayers(null);
-    void setSelectedTags([]);
-    void setSearchTerm("");
+    setSelectedGenre(null);
+    setSelectedPlayers(null);
+    setSelectedTags([]);
+    setSearchTerm("");
   };
 
-  // delete function
   const handleDeleteGame = async (gameId: string) => {
     try {
       await axios.delete(`${BASE_URL}/api/games/${gameId}/`);
@@ -191,19 +186,17 @@ const MyGames: React.FC = () => {
     }
   };
 
-  // edit function
   const handleEditGame = (gameId: string) => {
     navigate(`/edit/${gameId}`);
   };
 
   return (
-    <Box bg="gray.0" mih="100vh">
-      {/* Header */}
-      <Paper shadow="sm" py="xl">
+    <Box bg={brandColors.beige} mih="100vh">
+      <Paper shadow="sm" py="xl" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: brandColors.beige }}>
         <Container size="xl">
           <Flex justify="space-between" align="center">
-            <Title order={1}>My Games</Title>
-            <Text c="dimmed">
+            <Title order={1} c={brandColors.darkBrown}>My Games</Title>
+            <Text c={brandColors.mutedGreen} size="sm">
               {filteredGames.length} game{filteredGames.length !== 1 ? "s" : ""}{" "}
               in collection
             </Text>
@@ -212,21 +205,17 @@ const MyGames: React.FC = () => {
       </Paper>
 
       <Container size="xl" py="xl">
-        {/* Filters Section */}
-        <Paper shadow="sm" p="lg" radius="md" mb="xl">
-          {/* Search Bar */}
+        <Paper shadow="sm" p="lg" radius="md" mb="xl" style={{ backgroundColor: "white" }}>
           <TextInput
-            placeholder="Search games by title, genre, or publisher..."
+            placeholder="Search games..."
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.currentTarget.value)}
-            leftSection={
-              <IconSearch style={{ width: rem(16), height: rem(16) }} />
-            }
+            leftSection={<IconSearch style={{ width: rem(16), height: rem(16), color: brandColors.mutedGreen }} />}
             rightSection={
               searchTerm && (
                 <ActionIcon
                   variant="subtle"
-                  c="dimmed"
+                  c={brandColors.mutedGreen}
                   onClick={() => setSearchTerm("")}
                 >
                   <IconX style={{ width: rem(16), height: rem(16) }} />
@@ -234,24 +223,22 @@ const MyGames: React.FC = () => {
               )
             }
             mb="md"
+            styles={{ input: { borderColor: brandColors.lightBrown } }}
           />
 
-          {/* Filter Toggle */}
           <Button
             variant="subtle"
-            leftSection={
-              <IconFilter style={{ width: rem(16), height: rem(16) }} />
-            }
+            leftSection={<IconFilter style={{ width: rem(16), height: rem(16) }} />}
             onClick={() => setShowFilters(!showFilters)}
+            c={brandColors.mutedGreen}
             mb="md"
           >
             {showFilters ? "Hide Filters" : "Show Filters"}
           </Button>
 
-          {/* Filters */}
           <Collapse in={showFilters}>
-            <Divider mb="md" />
-            <Grid>
+            <Divider my="md" color={brandColors.lightBrown} />
+            <Grid gutter="md">
               <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
                 <Select
                   label="Genre"
@@ -260,6 +247,7 @@ const MyGames: React.FC = () => {
                   value={selectedGenre}
                   onChange={setSelectedGenre}
                   clearable
+                  styles={{ input: { borderColor: brandColors.lightBrown } }}
                 />
               </Grid.Col>
 
@@ -271,6 +259,7 @@ const MyGames: React.FC = () => {
                   value={selectedPlayers}
                   onChange={setSelectedPlayers}
                   clearable
+                  styles={{ input: { borderColor: brandColors.lightBrown } }}
                 />
               </Grid.Col>
 
@@ -283,6 +272,7 @@ const MyGames: React.FC = () => {
                   onChange={setSelectedTags}
                   clearable
                   searchable
+                  styles={{ input: { borderColor: brandColors.lightBrown } }}
                 />
               </Grid.Col>
 
@@ -290,7 +280,7 @@ const MyGames: React.FC = () => {
                 span={{ base: 12, sm: 6, md: 3 }}
                 style={{ display: "flex", alignItems: "end" }}
               >
-                <Button variant="light" fullWidth onClick={handleClearFilters}>
+                <Button variant="light" fullWidth onClick={handleClearFilters} c={brandColors.darkBrown} style={{ backgroundColor: brandColors.beige, borderColor: brandColors.lightBrown }}>
                   Clear Filters
                 </Button>
               </Grid.Col>
@@ -299,43 +289,52 @@ const MyGames: React.FC = () => {
         </Paper>
 
         <Group gap="md" mb="md">
-          <Button color="blue" onClick={() => navigate("/addgame")}>
+          <Button color={brandColors.accent} onClick={() => navigate("/addgame")}>
             Add Game
           </Button>
-          <Button 
-            variant="light" 
+          <Button
+            variant="light"
             onClick={fetchGames}
             disabled={loading}
+            c={brandColors.darkBrown}
+            style={{ backgroundColor: brandColors.beige }}
+            leftSection={loading && <Loader size="xs" color={brandColors.darkBrown} />}
           >
             {loading ? "Refreshing..." : "Refresh"}
           </Button>
         </Group>
 
-        {/* Games List */}
-        <Stack gap="md">
-          {filteredGames.length === 0 ? (
-            <Paper shadow="sm" p="xl" radius="md">
-              <Stack align="center" gap="xs">
-                <Text size="lg" c="dimmed">
-                  No games found
-                </Text>
-                <Text size="sm" c="dimmed">
-                  Try adjusting your search or filters
-                </Text>
-              </Stack>
-            </Paper>
-          ) : (
-            filteredGames.map((game) => (
-              <GameCard
-                key={game?.id || Math.random()}
-                game={game}
-                onClick={handleGameClick}
-                onDelete={handleDeleteGame}
-                onEdit={handleEditGame}
-              />
-            ))
-          )}
-        </Stack>
+        {loading ? (
+          <Center mt="xl">
+            <Loader color={brandColors.darkBrown} />
+          </Center>
+        ) : filteredGames.length === 0 ? (
+          <Paper shadow="sm" p="xl" radius="md">
+            <Stack align="center" gap="xs">
+              <Text size="lg" c="dimmed">
+                No games found
+              </Text>
+              <Text size="sm" c="dimmed">
+                Try adjusting your search or filters
+              </Text>
+            </Stack>
+          </Paper>
+        ) : (
+          <Grid gutter="md">
+            {filteredGames.map((game) => (
+              <Grid.Col key={game?.id || Math.random()} span={{ base: 12, sm: 6, lg: 4 }}>
+                <GameCard
+                  game={game}
+                  onClick={handleGameClick}
+                  onDelete={handleDeleteGame}
+                  onEdit={handleEditGame}
+                  accentColor={brandColors.accent}
+                  mutedColor={brandColors.mutedGreen}
+                />
+              </Grid.Col>
+            ))}
+          </Grid>
+        )}
       </Container>
     </Box>
   );
