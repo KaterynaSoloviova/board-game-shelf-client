@@ -33,6 +33,8 @@ import {
   IconUpload,
   IconPhoto,
   IconInfoCircle,
+  IconHeart,
+  IconHeartPlus,
 } from "@tabler/icons-react";
 
 import { Game, Session, File as GameFile } from "../interfaces";
@@ -85,6 +87,7 @@ export default function GameDetailsPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
     if (!gameId) return;
@@ -115,6 +118,7 @@ export default function GameDetailsPage() {
         fetchSessions(gameId);
         fetchFiles(gameId);
         fetchAllPlayers();
+        checkWishlistStatus(gameId);
       })
       .catch((err) => {
         console.error("Error fetching game:", err);
@@ -323,6 +327,43 @@ export default function GameDetailsPage() {
     link.click();
   };
 
+  const checkWishlistStatus = async (gameId: string) => {
+    try {
+      // You might want to create an endpoint to check if a game is in wishlist
+      // For now, we'll assume it's not in wishlist initially
+      // You can implement this based on your backend structure
+      const response = await axios.get(`${BASE_URL}/api/games/${gameId}/wishlist-status`);
+      setIsInWishlist(response.data.isInWishlist || false);
+    } catch (error) {
+      console.error('Failed to check wishlist status:', error);
+      // Default to false if we can't determine the status
+      setIsInWishlist(false);
+    }
+  };
+
+  const handleWishlistToggle = async () => {
+    if (!game || !gameId) return;
+    
+    try {
+      if (isInWishlist) {
+        // Remove from wishlist
+        await axios.post(`${BASE_URL}/api/games/${gameId}/removeWishlist`);
+        setIsInWishlist(false);
+        console.log('Removed from wishlist:', game.title);
+      } else {
+        // Add to wishlist
+        await axios.post(`${BASE_URL}/api/games/${gameId}/addWishlist`);
+        setIsInWishlist(true);
+        console.log('Added to wishlist:', game.title);
+      }
+    } catch (error) {
+      console.error('Failed to update wishlist:', error);
+      // Revert the state change if the API call fails
+      setIsInWishlist(!isInWishlist);
+      // You could add a toast notification here to inform the user of the error
+    }
+  };
+
   // Loading and error states
   if (loading) {
     return (
@@ -396,7 +437,26 @@ export default function GameDetailsPage() {
                 />
                 <InfoItem label="Play Time" value={`${game.playTime} min`} />
                 <InfoItem label="Age" value={game.age} />
+                <InfoItem label="Status" value={game.isOwned ? "On the shelf" : "Not Owned"} />
               </Flex>
+              
+              {/* Wishlist Button - Only show for games not owned */}
+              {!game.isOwned && (
+                <Box mt="md">
+                  <Button
+                    variant="light"
+                    onClick={handleWishlistToggle}
+                    style={{ 
+                      backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige, 
+                      borderColor: brandColors.lightBrown,
+                      color: isInWishlist ? 'white' : brandColors.darkBrown
+                    }}
+                    leftSection={isInWishlist ? <IconHeart size={16} /> : <IconHeartPlus size={16} />}
+                  >
+                    {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                  </Button>
+                </Box>
+              )}
             </Stack>
           </Flex>
         </Paper>

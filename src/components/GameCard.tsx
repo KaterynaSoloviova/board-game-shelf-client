@@ -21,7 +21,6 @@ import {
   IconPencil,
   IconStar,
   IconCalendarEvent,
-  IconCheck,
 } from "@tabler/icons-react";
 import { Game, Tag } from "../interfaces";
 
@@ -84,12 +83,7 @@ export const GameCard: React.FC<GameCardProps> = ({
         display: 'flex',
         flexDirection: 'column',
       }}
-      sx={{
-        "&:hover": {
-          transform: "translateY(-2px)",
-          boxShadow: "md",
-        },
-      }}
+
       onClick={() => onClick(safeGame.id)}
     >
       <Box style={{ position: "relative" }}>
@@ -117,23 +111,21 @@ export const GameCard: React.FC<GameCardProps> = ({
             {safeGame.rating.toFixed(1)}
           </Text>
         </Group>
-        {safeGame.isOwned && (
-          <Tooltip label="Owned">
-            <ActionIcon
-              variant="filled"
-              color="green"
-              size="sm"
-              style={{
-                position: "absolute",
-                bottom: rem(8),
-                left: rem(8),
-                borderRadius: '50%',
-              }}
-            >
-              <IconCheck size={16} />
-            </ActionIcon>
-          </Tooltip>
-        )}
+        <Box
+          style={{
+            position: "absolute",
+            bottom: rem(8),
+            left: rem(8),
+            background: "rgba(255, 255, 255, 0.95)",
+            borderRadius: rem(4),
+            padding: `4px ${rem(8)}`,
+            border: `1px solid ${safeGame.isOwned ? "rgba(76, 175, 80, 0.8)" : "rgba(158, 158, 158, 0.8)"}`,
+          }}
+        >
+          <Text size="xs" fw={600} c={safeGame.isOwned ? "rgba(76, 175, 80, 1)" : "rgba(158, 158, 158, 1)"}>
+            {safeGame.isOwned ? "On the shelf" : "Not Owned"}
+          </Text>
+        </Box>
       </Box>
 
       <Stack gap="sm" style={{ flexGrow: 1 }}>

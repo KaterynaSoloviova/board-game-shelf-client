@@ -70,7 +70,7 @@ const MyGames: React.FC = () => {
           }
         })
       );
-
+      console.log("Games with sessions:", gamesWithSessions);
       setGames(gamesWithSessions);
     } catch (error) {
       console.error("Failed to fetch games:", error);
@@ -159,8 +159,7 @@ const MyGames: React.FC = () => {
         matchesSearch &&
         matchesGenre &&
         matchesPlayers &&
-        matchesTags &&
-        game.isOwned
+        matchesTags
       );
     });
   }, [games, searchTerm, selectedGenre, selectedPlayers, selectedTags]);

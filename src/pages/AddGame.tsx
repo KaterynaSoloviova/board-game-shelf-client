@@ -150,7 +150,6 @@ export const AddGame: React.FC = () => {
         myRating,
         coverImage,
         isOwned,
-        sessions: [],
         tags: tags.map((t) => ({ title: t })),
         createdAt: new Date(),
       });

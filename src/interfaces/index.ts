@@ -28,6 +28,11 @@ export interface Game {
   _count?: {
     sessions: number;
   };
+  wishlist?: {
+    id: string;
+    reason: string;
+    createdAt: Date;
+  }
 }
 
 export interface Tag {
