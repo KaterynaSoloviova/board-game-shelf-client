@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import MyGames from "./pages/MyGames";
 import AddGame from "./pages/AddGame";
 import GameDetailsPage from "./pages/GameDetailsPage"; 
+import EditGame from "./pages/EditGame";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/games" element={<MyGames />} />
             <Route path="/addgame" element={<AddGame />} />
             <Route path="/game/:gameId" element={<GameDetailsPage />} />
+            <Route path="/edit/:gameId" element={<EditGame />} />
           </Routes>
           <Footer />
         </MantineProvider>

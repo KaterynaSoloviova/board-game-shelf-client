@@ -154,6 +154,11 @@ const MyGames: React.FC = () => {
     }
   };
 
+  // edit function
+  const handleEditGame = (gameId: string) => {
+    navigate(`/edit/${gameId}`);
+  };
+
   return (
     <Box bg="gray.0" mih="100vh">
       {/* Header */}
@@ -280,6 +285,7 @@ const MyGames: React.FC = () => {
                 game={game}
                 onClick={handleGameClick}
                 onDelete={handleDeleteGame}
+                onEdit={handleEditGame}
               />
             ))
           )}

@@ -17,16 +17,18 @@ import {
   IconUsers,
   IconClock,
   IconX,
+  IconEdit,
 } from "@tabler/icons-react";
-import { Game } from "../interfaces";
+import { Game, Tag } from "../interfaces";
 
 interface GameCardProps {
   game: Game;
   onClick: (gameId: string) => void;
   onDelete: (gameId: string) => void;
+  onEdit?: (gameId: string) => void;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({ game, onClick, onDelete }) => {
+export const GameCard: React.FC<GameCardProps> = ({ game, onClick, onDelete, onEdit }) => {
   const formatPlayerCount = (min: number, max: number): string => {
     return min === max
       ? `${min} Player${min > 1 ? "s" : ""}`
@@ -46,6 +48,7 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onClick, onDelete }) =
     coverImage: game?.coverImage || "",
     myRating: game?.myRating,
     sessions: game?.sessions || [],
+    tags: game?.tags || [],
   };
 
   return (
@@ -164,6 +167,45 @@ export const GameCard: React.FC<GameCardProps> = ({ game, onClick, onDelete }) =
               {safeGame.sessions.length}
             </Badge>
           </Group>
+
+          {/* Tags */}
+          {safeGame.tags && safeGame.tags.length > 0 && (
+            <Group gap="xs">
+              <Text size="sm" fw={500}>
+                Tags:
+              </Text>
+              <Group gap="xs" wrap="wrap">
+                {safeGame.tags.map((tag: Tag, index: number) => (
+                  <Badge
+                    key={tag.id || index}
+                    variant="dot"
+                    size="xs"
+                    color="blue"
+                  >
+                    {tag.title}
+                  </Badge>
+                ))}
+              </Group>
+            </Group>
+          )}
+
+          {/* Edit Button - Bottom Right */}
+          {onEdit && (
+            <Group justify="flex-end" mt="md">
+              <ActionIcon
+                color="blue"
+                variant="light"
+                size="md"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent card click navigation
+                  onEdit(safeGame.id); // Call the edit function
+                }}
+                title="Edit Game"
+              >
+                <IconEdit style={{ width: rem(18), height: rem(18) }} />
+              </ActionIcon>
+            </Group>
+          )}
         </Stack>
       </Flex>
     </Card>
