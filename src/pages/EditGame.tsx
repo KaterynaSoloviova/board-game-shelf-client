@@ -48,10 +48,12 @@ import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
 import { BASE_URL, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from "../config";
 import { Game } from "../interfaces";
+import { useTags } from "../hooks/useTags";
 
 export const EditGame: React.FC = () => {
   const navigate = useNavigate();
   const { gameId } = useParams<{ gameId: string }>();
+  const { tagOptions, loading: tagsLoading, error: tagsError, addNewTag } = useTags();
 
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,33 +75,6 @@ export const EditGame: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [imagePreview, setImagePreview] = useState("");
-  const [tagOptions, setTagOptions] = useState<string[]>([
-    "Quick Play",
-    "Long Game",
-    "Family Friendly",
-    "Complex Rules",
-    "Light Strategy",
-    "Heavy Strategy",
-    "Multiplayer",
-    "Solo Play",
-    "Educational",
-    "Competitive",
-    "Cooperative",
-    "Storytelling",
-    "Abstract",
-    "Thematic",
-    "Euro Game",
-    "Area Control",
-    "Deck Building",
-    "Worker Placement",
-    "Engine Building",
-    "Roll and Write",
-    "Social Deduction",
-    "Hidden Roles",
-    "Tile Placement",
-    "Set Collection",
-    "Hand Management",
-  ]);
   const [newTag, setNewTag] = useState("");
   const [tagsDropdownOpen, setTagsDropdownOpen] = useState(false);
 
@@ -172,7 +147,7 @@ export const EditGame: React.FC = () => {
       formData.append("file", file);
       formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-      const res = await fetch(CLOUDINARY_URL, {
+      const res = await fetch(`${CLOUDINARY_URL}/image/upload`, {
         method: "POST",
         body: formData,
       });
@@ -231,9 +206,7 @@ export const EditGame: React.FC = () => {
     const normalized = newTag.trim();
     if (!normalized) return;
 
-    if (!tagOptions.includes(normalized)) {
-      setTagOptions((curr) => [...curr, normalized]);
-    }
+    addNewTag(normalized);
     if (!tags.includes(normalized)) {
       setTags((curr) => [...curr, normalized]);
     }
@@ -636,9 +609,7 @@ export const EditGame: React.FC = () => {
                   onClick={() => {
                     const normalized = newTag.trim();
                     if (!normalized) return;
-                    if (!tagOptions.includes(normalized)) {
-                      setTagOptions((curr) => [...curr, normalized]);
-                    }
+                    addNewTag(normalized);
                     if (!tags.includes(normalized)) {
                       setTags((curr) => [...curr, normalized]);
                     }
