@@ -32,6 +32,11 @@ import {
   IconInfoCircle,
   IconBold,
   IconItalic,
+  IconUnderline,
+  IconStrikethrough,
+  IconAlignLeft,
+  IconAlignCenter,
+  IconAlignRight,
   IconUsers,
   IconClock,
   IconStar,
@@ -43,9 +48,9 @@ import {
 import axios from "axios";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Bold from "@tiptap/extension-bold";
-
-import Italic from "@tiptap/extension-italic";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import Strike from "@tiptap/extension-strike";
 import { BASE_URL, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from "../config";
 import { useTags } from "../hooks/useTags";
 
@@ -73,13 +78,19 @@ export const AddGame: React.FC = () => {
   const [tagsDropdownOpen, setTagsDropdownOpen] = useState(false);
 
   const editor = useEditor({
-    extensions: [StarterKit, Bold, Italic],
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph']
+      }),
+      Underline,
+      Strike
+    ],
     content: "<p>Enter your game description here...</p>",
     onUpdate: ({ editor }) => setDescription(editor.getHTML()),
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none",
+        class: "prose prose-sm sm:prose-lg xl:prose-2xl mx-auto focus:outline-none",
         style: "min-height: 120px; padding: 12px;",
       },
     },
@@ -245,6 +256,7 @@ export const AddGame: React.FC = () => {
               </Text>
               <Card shadow="sm" padding="xs" radius="md" bg="white">
                 <Group mb="xs" gap="xs">
+                  {/* Text Formatting */}
                   <Tooltip label="Bold">
                     <ActionIcon
                       variant={editor?.isActive("bold") ? "filled" : "light"}
@@ -257,14 +269,109 @@ export const AddGame: React.FC = () => {
                   <Tooltip label="Italic">
                     <ActionIcon
                       variant={editor?.isActive("italic") ? "filled" : "light"}
-                      onClick={() =>
-                        editor?.chain().focus().toggleItalic().run()
-                      }
+                      onClick={() => editor?.chain().focus().toggleItalic().run()}
                       size="sm"
                     >
                       <IconItalic size={14} />
                     </ActionIcon>
                   </Tooltip>
+                  <Tooltip label="Underline">
+                    <ActionIcon
+                      variant={editor?.isActive("underline") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                      size="sm"
+                    >
+                      <IconUnderline size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Strikethrough">
+                    <ActionIcon
+                      variant={editor?.isActive("strike") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleStrike().run()}
+                      size="sm"
+                    >
+                      <IconStrikethrough size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  
+                  {/* Headings */}
+                  <Tooltip label="Heading 1">
+                    <ActionIcon
+                      variant={editor?.isActive("heading", { level: 1 }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+                      size="sm"
+                    >
+                      H1
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Heading 2">
+                    <ActionIcon
+                      variant={editor?.isActive("heading", { level: 2 }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                      size="sm"
+                    >
+                      H2
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Heading 3">
+                    <ActionIcon
+                      variant={editor?.isActive("heading", { level: 3 }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+                      size="sm"
+                    >
+                      H3
+                    </ActionIcon>
+                  </Tooltip>
+                  
+                  {/* Lists */}
+                  <Tooltip label="Bullet List">
+                    <ActionIcon
+                      variant={editor?.isActive("bulletList") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                      size="sm"
+                    >
+                      • List
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Numbered List">
+                    <ActionIcon
+                      variant={editor?.isActive("orderedList") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                      size="sm"
+                    >
+                      1. List
+                    </ActionIcon>
+                  </Tooltip>
+                  
+                  {/* Text Alignment */}
+                  <Tooltip label="Align Left">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'left' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+                      size="sm"
+                    >
+                      <IconAlignLeft size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Align Center">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'center' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+                      size="sm"
+                    >
+                      <IconAlignCenter size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Align Right">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'right' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+                      size="sm"
+                    >
+                      <IconAlignRight size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  
                 </Group>
                 <Box
                   style={{

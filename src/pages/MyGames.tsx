@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Title,
@@ -16,6 +16,7 @@ import {
   Grid,
   Box,
   Paper,
+  Group,
   rem,
 } from "@mantine/core";
 import { IconSearch, IconFilter, IconX } from "@tabler/icons-react";
@@ -26,6 +27,7 @@ import { GameCard } from "../components/GameCard";
 
 const MyGames: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedPlayers, setSelectedPlayers] = useState<string | null>(null);
@@ -34,14 +36,49 @@ const MyGames: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchGames = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${BASE_URL}/api/games/`);
+      console.log("Fetched games:", response.data);
+      
+      // Fetch sessions for each game individually
+      const gamesWithSessions = await Promise.all(
+        response.data.map(async (game: Game) => {
+          try {
+            const sessionsResponse = await axios.get(`${BASE_URL}/api/games/${game.id}/sessions`);
+            console.log(`Game ${game.title} sessions:`, sessionsResponse.data);
+            return {
+              ...game,
+              sessions: sessionsResponse.data || []
+            };
+          } catch (error) {
+            console.error(`Failed to fetch sessions for game ${game.title}:`, error);
+            return {
+              ...game,
+              sessions: []
+            };
+          }
+        })
+      );
+      
+      console.log("Games with sessions:", gamesWithSessions);
+      setGames(gamesWithSessions);
+    } catch (error) {
+      console.error("Failed to fetch games:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    axios
-      .get(`${BASE_URL}/api/games/`)
-      .then((res) => {
-        setGames(res.data);
-      })
-      .finally(() => setLoading(false));
+    fetchGames();
   }, []);
+
+  // Refresh games when user navigates back to this page
+  useEffect(() => {
+    fetchGames();
+  }, [location.pathname]);
 
   // filter data
   const genres = useMemo(
@@ -261,9 +298,18 @@ const MyGames: React.FC = () => {
           </Collapse>
         </Paper>
 
-        <Button color="blue" mb="md" onClick={() => navigate("/addgame")}>
-          Add Game
-        </Button>
+        <Group gap="md" mb="md">
+          <Button color="blue" onClick={() => navigate("/addgame")}>
+            Add Game
+          </Button>
+          <Button 
+            variant="light" 
+            onClick={fetchGames}
+            disabled={loading}
+          >
+            {loading ? "Refreshing..." : "Refresh"}
+          </Button>
+        </Group>
 
         {/* Games List */}
         <Stack gap="md">

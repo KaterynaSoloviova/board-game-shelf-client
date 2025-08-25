@@ -77,7 +77,6 @@ export default function GameDetailsPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
-
   useEffect(() => {
     if (!gameId) return;
     setLoading(true);
@@ -98,74 +97,132 @@ export default function GameDetailsPage() {
           rating: res.data?.rating ?? 0,
           myRating: res.data?.myRating ?? undefined,
           description: res.data?.description || "No description available.",
-          sessions: res.data?.sessions || [],
-          files: res.data?.files || [],
-          isOwned: res.data?.isOwned || false,
-          createdAt: res.data?.createdAt || new Date(),
-          updatedAt: res.data?.updatedAt,
+          isOwned: res.data?.isOwned ?? false,
           tags: res.data?.tags || [],
+          sessions: res.data?.sessions || [],
+          createdAt: res.data?.createdAt || new Date().toISOString(),
         };
-
         setGame(safeGame);
+        fetchSessions(gameId);
+        fetchFiles(gameId);
+        fetchAllPlayers();
       })
-      .catch(() => setError("Failed to load game details"))
+      .catch((err) => {
+        console.error("Error fetching game:", err);
+        setError("Failed to load game details");
+      })
       .finally(() => setLoading(false));
-
-    // Fetch sessions, files, and all players separately
-    if (gameId) {
-      fetchSessions(gameId);
-      fetchFiles(gameId);
-      fetchAllPlayers();
-    }
   }, [gameId]);
 
+  // Fetch sessions
   const fetchSessions = async (gameId: string) => {
     try {
-      const sessionsResponse = await axios.get(`${BASE_URL}/api/games/${gameId}/sessions`);
-      setGame(prevGame => {
-        if (prevGame) {
-          return {
-            ...prevGame,
-            sessions: sessionsResponse.data
-          };
-        }
-        return prevGame;
-      });
+      const response = await axios.get(`${BASE_URL}/api/games/${gameId}/sessions`);
+      setGame(prev => prev ? { ...prev, sessions: response.data } : null);
     } catch (error) {
-      console.error("Failed to fetch sessions:", error);
-      // Keep existing sessions if fetch fails
+      console.error("Error fetching sessions:", error);
     }
   };
 
+  // Fetch files
   const fetchFiles = async (gameId: string) => {
     try {
-      const filesResponse = await axios.get(`${BASE_URL}/api/games/${gameId}/files`);
-      setFiles(filesResponse.data);
+      const response = await axios.get(`${BASE_URL}/api/games/${gameId}/files`);
+      setFiles(response.data);
     } catch (error) {
-      console.error("Failed to fetch files:", error);
-      setFiles([]);
+      console.error("Error fetching files:", error);
     }
   };
 
+  // Fetch all players
   const fetchAllPlayers = async () => {
     try {
-      const playersResponse = await axios.get(`${BASE_URL}/api/players`);
-      console.log("Fetched players:", playersResponse.data);
-      const playerNames = playersResponse.data.map((player: any) => player.name);
-      console.log("Player names:", playerNames);
-      setExistingPlayers(playerNames);
+      const response = await axios.get(`${BASE_URL}/api/players`);
+      setExistingPlayers(response.data.map((p: any) => p.name));
     } catch (error) {
-      console.error("Failed to fetch players:", error);
-      setExistingPlayers([]);
+      console.error("Error fetching players:", error);
     }
   };
 
-  const addPlayerToSession = () => {
-    if (newPlayerName.trim()) {
-      if (!selectedPlayers.includes(newPlayerName.trim())) {
-        setSelectedPlayers([...selectedPlayers, newPlayerName.trim()]);
-        setNewPlayerName("");
+  // Session handlers
+  const handleAddSession = async () => {
+    if (!gameId || !sessionDate.trim()) return;
+
+    try {
+      const players = selectedPlayers.map(name => ({ name }));
+      if (selectedExistingPlayer) {
+        players.push({ name: selectedExistingPlayer });
       }
+
+      await axios.post(`${BASE_URL}/api/games/${gameId}/sessions/`, {
+        date: sessionDate,
+        notes: sessionNotes,
+        players,
+      });
+
+      await fetchSessions(gameId);
+      resetSessionForm();
+    } catch (error) {
+      console.error("Failed to add session:", error);
+    }
+  };
+
+  const handleEditSession = async () => {
+    if (!editingSession || !gameId) return;
+
+    try {
+      const players = selectedPlayers.map(name => ({ name }));
+      if (selectedExistingPlayer) {
+        players.push({ name: selectedExistingPlayer });
+      }
+
+      await axios.put(`${BASE_URL}/api/sessions/${editingSession.id}`, {
+        date: sessionDate,
+        notes: sessionNotes,
+        players,
+      });
+
+      await fetchSessions(gameId);
+      resetSessionForm();
+    } catch (error) {
+      console.error("Failed to edit session:", error);
+    }
+  };
+
+  const handleDeleteSession = async (sessionId: string) => {
+    if (!gameId) return;
+
+    try {
+      await axios.delete(`${BASE_URL}/api/sessions/${sessionId}`);
+      await fetchSessions(gameId);
+    } catch (error) {
+      console.error("Failed to delete session:", error);
+    }
+  };
+
+  const openEditSession = (session: Session) => {
+    setEditingSession(session);
+    setSessionDate(typeof session.date === 'string' ? session.date : session.date.toISOString().split('T')[0]);
+    setSessionNotes(session.notes || "");
+    setSelectedPlayers(session.players?.map(p => p.name) || []);
+    setEditSessionModalOpen(true);
+  };
+
+  const resetSessionForm = () => {
+    setSessionDate("");
+    setSessionNotes("");
+    setSelectedPlayers([]);
+    setNewPlayerName("");
+    setSelectedExistingPlayer(null);
+    setAddSessionModalOpen(false);
+    setEditSessionModalOpen(false);
+    setEditingSession(null);
+  };
+
+  const addNewPlayerToSession = () => {
+    if (newPlayerName.trim() && !selectedPlayers.includes(newPlayerName.trim())) {
+      setSelectedPlayers([...selectedPlayers, newPlayerName.trim()]);
+      setNewPlayerName("");
     }
   };
 
@@ -176,235 +233,55 @@ export default function GameDetailsPage() {
     }
   };
 
-  const removePlayerFromSession = (playerName: string) => {
-    setSelectedPlayers(selectedPlayers.filter(p => p !== playerName));
+  // File handlers
+  const handleFileUpload = (file: File | null) => {
+    if (!file) return;
+    setUploadedFile(file);
+    setUploadError("");
+    uploadFileToCloudinary(file);
   };
 
-  const handleAddSession = async () => {
-    if (!sessionDate || selectedPlayers.length === 0 || !game || !gameId) {
-      alert("Please fill in date and add at least one player");
-      return;
-    }
+  const uploadFileToCloudinary = async (file: File) => {
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
     try {
-      // First, create or get players
-      const playerPromises = selectedPlayers.map(async (playerName) => {
-        try {
-          // Try to find existing player
-          const existingPlayer = await axios.get(`${BASE_URL}/api/players`);
-          const player = existingPlayer.data.find((p: any) => p.name === playerName);
-          
-          if (player) {
-            return player.id;
-          } else {
-            // Create new player
-            const newPlayer = await axios.post(`${BASE_URL}/api/players`, { name: playerName });
-            return newPlayer.data.id;
-          }
-        } catch (error) {
-          console.error("Error with player:", playerName, error);
-          return null;
-        }
-      });
-
-      const playerIds = (await Promise.all(playerPromises)).filter(id => id !== null);
-
-      // Create session using the correct endpoint
-      const sessionData = {
-        date: sessionDate,
-        notes: sessionNotes,
-        playerIds: playerIds
-      };
-
-      await axios.post(`${BASE_URL}/api/games/${gameId}/sessions/`, sessionData);
-      
-      // Refresh sessions from server
-      await fetchSessions(gameId);
-
-      // Reset form and close modal
-      setSessionDate("");
-      setSessionNotes("");
-      setSelectedPlayers([]);
-      setNewPlayerName("");
-      setAddSessionModalOpen(false);
+      const response = await axios.post(CLOUDINARY_URL, formData);
+      setFileLink(response.data.secure_url);
     } catch (error) {
-      console.error("Failed to add session:", error);
-      alert("Failed to add session. Please try again.");
-    }
-  };
-
-  const resetSessionForm = () => {
-    setSessionDate("");
-    setSessionNotes("");
-    setSelectedPlayers([]);
-    setNewPlayerName("");
-    setSelectedExistingPlayer(null);
-    setAddSessionModalOpen(false);
-  };
-
-  const openEditSession = (session: Session) => {
-    setEditingSession(session);
-    setSessionDate(new Date(session.date).toISOString().split('T')[0]);
-    setSessionNotes(session.notes || "");
-    setSelectedPlayers(session.players?.map(p => p.name) || []);
-    setEditSessionModalOpen(true);
-  };
-
-  const handleEditSession = async () => {
-    if (!editingSession || !sessionDate || selectedPlayers.length === 0 || !game || !gameId) {
-      alert("Please fill in date and add at least one player");
-      return;
-    }
-
-    try {
-      // First, create or get players
-      const playerPromises = selectedPlayers.map(async (playerName) => {
-        try {
-          // Try to find existing player
-          const existingPlayer = await axios.get(`${BASE_URL}/api/players`);
-          const player = existingPlayer.data.find((p: any) => p.name === playerName);
-          
-          if (player) {
-            return player.id;
-          } else {
-            // Create new player
-            const newPlayer = await axios.post(`${BASE_URL}/api/players`, { name: playerName });
-            return newPlayer.data.id;
-          }
-        } catch (error) {
-          console.error("Error with player:", playerName, error);
-          return null;
-        }
-      });
-
-      const playerIds = (await Promise.all(playerPromises)).filter(id => id !== null);
-
-      // Update session using the correct endpoint
-      const sessionData = {
-        date: sessionDate,
-        notes: sessionNotes,
-        playerIds: playerIds
-      };
-
-      await axios.put(`${BASE_URL}/api/sessions/${editingSession.id}`, sessionData);
-      
-      // Refresh sessions from server
-      await fetchSessions(gameId);
-
-      // Reset form and close modal
-      setEditingSession(null);
-      setSessionDate("");
-      setSessionNotes("");
-      setSelectedPlayers([]);
-      setNewPlayerName("");
-      setSelectedExistingPlayer(null);
-      setEditSessionModalOpen(false);
-    } catch (error) {
-      console.error("Failed to edit session:", error);
-      alert("Failed to edit session");
-    }
-  };
-
-  const handleDeleteSession = async (sessionId: string) => {
-    if (!game || !gameId) return;
-
-    if (!confirm("Are you sure you want to delete this session?")) return;
-
-    try {
-      // Delete session using the correct endpoint
-      await axios.delete(`${BASE_URL}/api/sessions/${sessionId}`);
-      
-      // Refresh sessions from server
-      await fetchSessions(gameId);
-    } catch (error) {
-      console.error("Failed to delete session:", error);
-      alert("Failed to delete session");
+      setUploadError("Failed to upload file");
+      console.error("Upload error:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleAddFile = async () => {
-    if (!fileTitle.trim() || !fileLink.trim() || !gameId) {
-      alert("Please fill in both title and link");
-      return;
-    }
+    if (!gameId || !fileTitle.trim() || !fileLink) return;
 
     try {
-      const fileData = {
-        title: fileTitle.trim(),
-        link: fileLink.trim()
-      };
+      await axios.post(`${BASE_URL}/api/games/${gameId}/files`, {
+        title: fileTitle,
+        link: fileLink,
+      });
 
-      await axios.post(`${BASE_URL}/api/games/${gameId}/files`, fileData);
-      
-      // Refresh files from server
       await fetchFiles(gameId);
-      
-      // Reset form and close modal
-      setFileTitle("");
-      setFileLink("");
-      setAddFileModalOpen(false);
+      resetFileForm();
     } catch (error) {
       console.error("Failed to add file:", error);
-      alert("Failed to add file");
     }
   };
 
   const handleDeleteFile = async (fileId: string) => {
-    if (!confirm("Are you sure you want to delete this file?")) return;
+    if (!gameId) return;
 
     try {
       await axios.delete(`${BASE_URL}/api/files/${fileId}`);
-      
-      // Refresh files from server
-      if (gameId) {
-        await fetchFiles(gameId);
-      }
+      await fetchFiles(gameId);
     } catch (error) {
       console.error("Failed to delete file:", error);
-      alert("Failed to delete file");
-    }
-  };
-
-  const handleFileUpload = async (file: File | null) => {
-    if (!file) return;
-
-    setIsUploading(true);
-    setUploadError("");
-
-    try {
-      // For PDFs, try using the regular image upload but with proper handling
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-      
-      // Don't specify resource_type - let Cloudinary auto-detect
-      // This should make files publicly accessible by default
-
-      console.log('Uploading to:', CLOUDINARY_URL);
-      console.log('File type:', file.type);
-      console.log('File name:', file.name);
-      
-      const res = await fetch(CLOUDINARY_URL, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Upload failed:', res.status, errorText);
-        throw new Error(`Upload failed: ${res.status}`);
-      }
-
-      const data = await res.json();
-      console.log('Upload response:', data);
-      setFileLink(data.secure_url);
-      setUploadedFile(file);
-      setUploadError("");
-    } catch (error) {
-      console.error("File upload error:", error);
-      setUploadError("Failed to upload file. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -412,83 +289,54 @@ export default function GameDetailsPage() {
     setFileTitle("");
     setFileLink("");
     setUploadedFile(null);
-    setUploadError("");
     setAddFileModalOpen(false);
   };
 
-  const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    
-    switch (extension) {
-      case 'pdf':
-        return <IconFileText size={20} color="red" />;
-      case 'doc':
-      case 'docx':
-        return <IconFileText size={20} color="blue" />;
-      case 'xls':
-      case 'xlsx':
-        return <IconFileText size={20} color="green" />;
-      case 'txt':
-        return <IconFileText size={20} color="gray" />;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-        return <IconPhoto size={20} color="purple" />;
-      default:
-        return <IconFileText size={20} color="blue" />;
-    }
+  // Helper functions
+  const getFileIcon = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    return ext === 'pdf' ? <IconFileText size={20} /> : <IconPhoto size={20} />;
   };
 
-  const getFileTypeLabel = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    return extension ? extension.toUpperCase() : 'FILE';
-  };
-
-  const handleFileDownload = (file: GameFile) => {
-    // Simple direct download - should work now with regular upload
-    console.log('Downloading file:', file.title, 'URL:', file.link);
-    
-    const link = document.createElement('a');
-    link.href = file.link;
-    link.download = file.title;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const getFileTypeLabel = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    return ext ? ext.toUpperCase() : 'File';
   };
 
   const handleFileOpen = (file: GameFile) => {
-    // Simple open in new tab - should work now with regular upload
-    console.log('Opening file:', file.title, 'URL:', file.link);
     window.open(file.link, '_blank');
   };
 
+  const handleFileDownload = (file: GameFile) => {
+    const link = document.createElement('a');
+    link.href = file.link;
+    link.download = file.title;
+    link.click();
+  };
+
+  // Loading and error states
   if (loading) {
     return (
-      <Center h="50vh">
-        <Loader />
+      <Center style={{ minHeight: '60vh' }}>
+        <Stack align="center" gap="md">
+          <Loader size="xl" color="blue" />
+          <Text c="dimmed" size="lg">Loading game details...</Text>
+        </Stack>
       </Center>
     );
   }
 
   if (error || !game) {
     return (
-      <Container size="xl" py="xl">
-        <Paper shadow="sm" p="xl" radius="md">
-          <Stack align="center" gap="md">
-            <Text size="lg" c="red">
-              {error || "Game not found"}
-            </Text>
-            <Text
-              onClick={() => navigate("/games")}
-              style={{ cursor: "pointer", color: "blue" }}
-            >
-              Back to My Games
-            </Text>
-          </Stack>
-        </Paper>
-      </Container>
+      <Center style={{ minHeight: '60vh' }}>
+        <Stack align="center" gap="md">
+          <Text c="red" size="xl" fw={600}>Error</Text>
+          <Text c="dimmed">{error || "Game not found"}</Text>
+          <Button variant="light" onClick={() => navigate(-1)}>
+            Go Back
+          </Button>
+        </Stack>
+      </Center>
     );
   }
 
@@ -543,7 +391,17 @@ export default function GameDetailsPage() {
         <Paper shadow="sm" p="xl" radius="md" withBorder>
           <Stack>
             <Text fw={500}>Description:</Text>
-            <Text>{game.description}</Text>
+            {game.description ? (
+              <div 
+                dangerouslySetInnerHTML={{ __html: game.description }}
+                style={{
+                  lineHeight: '1.6',
+                  fontSize: '14px'
+                }}
+              />
+            ) : (
+              <Text c="dimmed">No description available.</Text>
+            )}
           </Stack>
         </Paper>
 
@@ -761,23 +619,24 @@ export default function GameDetailsPage() {
               <IconPlus size={16} />
             </ActionIcon>
           </Group>
-          
+
+          {/* New Player Input */}
           <Group gap="xs" align="flex-end">
             <TextInput
-              label="New player"
+              label="New Player"
               placeholder="Enter new player name"
               value={newPlayerName}
               onChange={(e) => setNewPlayerName(e.currentTarget.value)}
+              style={{ flex: 1 }}
               styles={{
                 input: { borderColor: 'green' }
               }}
-              style={{ flex: 1 }}
             />
             <ActionIcon
-              color="blue"
+              color="green"
               variant="filled"
               size="md"
-              onClick={addPlayerToSession}
+              onClick={addNewPlayerToSession}
               title="Add new player"
               disabled={!newPlayerName.trim()}
             >
@@ -787,20 +646,20 @@ export default function GameDetailsPage() {
 
           {/* Selected Players Display */}
           {selectedPlayers.length > 0 && (
-            <Stack gap="xs">
-              <Text size="sm" fw={500}>Selected Players:</Text>
-              <Group gap="xs">
+            <Box>
+              <Text size="sm" fw={500} mb="xs">Selected Players:</Text>
+              <Flex gap="xs" wrap="wrap">
                 {selectedPlayers.map((player, index) => (
                   <Badge
                     key={index}
                     variant="light"
-                    color="pink"
+                    color="blue"
                     rightSection={
                       <ActionIcon
                         size="xs"
-                        color="pink"
                         variant="transparent"
-                        onClick={() => removePlayerFromSession(player)}
+                        color="blue"
+                        onClick={() => setSelectedPlayers(selectedPlayers.filter((_, i) => i !== index))}
                       >
                         <IconX size={10} />
                       </ActionIcon>
@@ -809,8 +668,8 @@ export default function GameDetailsPage() {
                     {player}
                   </Badge>
                 ))}
-              </Group>
-            </Stack>
+              </Flex>
+            </Box>
           )}
 
           {/* Notes Input */}
@@ -826,19 +685,11 @@ export default function GameDetailsPage() {
 
           {/* Action Buttons */}
           <Group justify="flex-end" mt="md">
-            <Button
-              variant="light"
-              color="blue"
-              onClick={resetSessionForm}
-            >
+            <Button variant="light" color="gray" onClick={resetSessionForm}>
               Cancel
             </Button>
-            <Button
-              variant="light"
-              color="green"
-              onClick={handleAddSession}
-            >
-              Add
+            <Button color="blue" onClick={handleAddSession} disabled={!sessionDate.trim()}>
+              Add Session
             </Button>
           </Group>
         </Stack>
@@ -847,16 +698,12 @@ export default function GameDetailsPage() {
       {/* Edit Session Modal */}
       <Modal
         opened={editSessionModalOpen}
-        onClose={() => {
-          setEditingSession(null);
-          setEditSessionModalOpen(false);
-          resetSessionForm();
-        }}
+        onClose={resetSessionForm}
         title="Edit session"
         size="md"
         styles={{
-          title: { color: 'blue', fontWeight: 600 },
-          header: { borderBottom: '2px solid blue' }
+          title: { color: 'green', fontWeight: 600 },
+          header: { borderBottom: '2px solid green' }
         }}
       >
         <Stack gap="md">
@@ -868,7 +715,7 @@ export default function GameDetailsPage() {
             onChange={(e) => setSessionDate(e.currentTarget.value)}
             required
             styles={{
-              input: { borderColor: 'blue' }
+              input: { borderColor: 'green' }
             }}
           />
 
@@ -881,7 +728,7 @@ export default function GameDetailsPage() {
               data={existingPlayers}
               onChange={setSelectedExistingPlayer}
               styles={{
-                input: { borderColor: 'blue' }
+                input: { borderColor: 'green' }
               }}
               style={{ flex: 1 }}
               clearable
@@ -897,23 +744,24 @@ export default function GameDetailsPage() {
               <IconPlus size={16} />
             </ActionIcon>
           </Group>
-          
+
+          {/* New Player Input */}
           <Group gap="xs" align="flex-end">
             <TextInput
-              label="New player"
+              label="New Player"
               placeholder="Enter new player name"
               value={newPlayerName}
               onChange={(e) => setNewPlayerName(e.currentTarget.value)}
-              styles={{
-                input: { borderColor: 'blue' }
-              }}
               style={{ flex: 1 }}
+              styles={{
+                input: { borderColor: 'green' }
+              }}
             />
             <ActionIcon
-              color="blue"
+              color="green"
               variant="filled"
               size="md"
-              onClick={addPlayerToSession}
+              onClick={addNewPlayerToSession}
               title="Add new player"
               disabled={!newPlayerName.trim()}
             >
@@ -923,20 +771,20 @@ export default function GameDetailsPage() {
 
           {/* Selected Players Display */}
           {selectedPlayers.length > 0 && (
-            <Stack gap="xs">
-              <Text size="sm" fw={500}>Selected Players:</Text>
-              <Group gap="xs">
+            <Box>
+              <Text size="sm" fw={500} mb="xs">Selected Players:</Text>
+              <Flex gap="xs" wrap="wrap">
                 {selectedPlayers.map((player, index) => (
                   <Badge
                     key={index}
                     variant="light"
-                    color="pink"
+                    color="blue"
                     rightSection={
                       <ActionIcon
                         size="xs"
-                        color="pink"
                         variant="transparent"
-                        onClick={() => removePlayerFromSession(player)}
+                        color="blue"
+                        onClick={() => setSelectedPlayers(selectedPlayers.filter((_, i) => i !== index))}
                       >
                         <IconX size={10} />
                       </ActionIcon>
@@ -945,8 +793,8 @@ export default function GameDetailsPage() {
                     {player}
                   </Badge>
                 ))}
-              </Group>
-            </Stack>
+              </Flex>
+            </Box>
           )}
 
           {/* Notes Input */}
@@ -956,29 +804,17 @@ export default function GameDetailsPage() {
             value={sessionNotes}
             onChange={(e) => setSessionNotes(e.currentTarget.value)}
             styles={{
-              input: { borderColor: 'blue' }
+              input: { borderColor: 'green' }
             }}
           />
 
           {/* Action Buttons */}
           <Group justify="flex-end" mt="md">
-            <Button
-              variant="light"
-              color="gray"
-              onClick={() => {
-                setEditingSession(null);
-                setEditSessionModalOpen(false);
-                resetSessionForm();
-              }}
-            >
+            <Button variant="light" color="gray" onClick={resetSessionForm}>
               Cancel
             </Button>
-            <Button
-              variant="light"
-              color="blue"
-              onClick={handleEditSession}
-            >
-              Update
+            <Button color="blue" onClick={handleEditSession} disabled={!sessionDate.trim()}>
+              Update Session
             </Button>
           </Group>
         </Stack>
@@ -1066,11 +902,7 @@ export default function GameDetailsPage() {
 
           {/* Action Buttons */}
           <Group justify="flex-end" mt="md">
-            <Button
-              variant="light"
-              color="gray"
-              onClick={resetFileForm}
-            >
+            <Button variant="light" color="gray" onClick={resetFileForm}>
               Cancel
             </Button>
             <Button

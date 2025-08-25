@@ -32,6 +32,15 @@ import {
   IconInfoCircle,
   IconBold,
   IconItalic,
+  IconUnderline,
+  IconStrikethrough,
+  IconList,
+  IconListNumbers,
+  IconAlignLeft,
+  IconAlignCenter,
+  IconAlignRight,
+  IconArrowBackUp,
+  IconArrowForwardUp,
   IconUsers,
   IconClock,
   IconStar,
@@ -44,8 +53,9 @@ import {
 import axios from "axios";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Bold from "@tiptap/extension-bold";
-import Italic from "@tiptap/extension-italic";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import Strike from "@tiptap/extension-strike";
 import { BASE_URL, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from "../config";
 import { Game } from "../interfaces";
 import { useTags } from "../hooks/useTags";
@@ -79,13 +89,19 @@ export const EditGame: React.FC = () => {
   const [tagsDropdownOpen, setTagsDropdownOpen] = useState(false);
 
   const editor = useEditor({
-    extensions: [StarterKit, Bold, Italic],
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph']
+      }),
+      Underline,
+      Strike
+    ],
     content: "<p>Enter your game description here...</p>",
     onUpdate: ({ editor }) => setDescription(editor.getHTML()),
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none",
+        class: "prose prose-sm sm:prose-lg xl:prose-2xl mx-auto focus:outline-none",
         style: "min-height: 120px; padding: 12px;",
       },
     },
