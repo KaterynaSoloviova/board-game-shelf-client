@@ -7,6 +7,8 @@ import MyGames from "./pages/MyGames";
 import AddGame from "./pages/AddGame";
 import GameDetailsPage from "./pages/GameDetailsPage"; 
 import EditGame from "./pages/EditGame";
+import Wishlist from "./pages/Wishlist";
+import AboutProject from "./pages/AboutProject";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             <Route path="/addgame" element={<AddGame />} />
             <Route path="/game/:gameId" element={<GameDetailsPage />} />
             <Route path="/edit/:gameId" element={<EditGame />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/about" element={<AboutProject />} />
           </Routes>
           <Footer />
         </MantineProvider>
