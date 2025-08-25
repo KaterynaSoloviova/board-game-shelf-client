@@ -21,6 +21,7 @@ import {
   IconPencil,
   IconStar,
   IconCalendarEvent,
+  IconCheck,
 } from "@tabler/icons-react";
 import { Game, Tag } from "../interfaces";
 
@@ -39,7 +40,7 @@ export const GameCard: React.FC<GameCardProps> = ({
   onDelete,
   onEdit,
   accentColor = "#a87e5b",
-  mutedColor = "#8c947d",
+  mutedColor = "#635841",
 }) => {
   const formatPlayerCount = (min: number, max: number): string => {
     return min === max ? `${min}` : `${min}–${max}`;
@@ -52,9 +53,7 @@ export const GameCard: React.FC<GameCardProps> = ({
     minPlayers: game?.minPlayers || 1,
     maxPlayers: game?.maxPlayers || 1,
     playTime: game?.playTime || 0,
-    age: game?.age || "N/A",
     genre: game?.genre || "Unknown",
-    publisher: game?.publisher || "Unknown",
     coverImage: game?.coverImage || "",
     myRating: game?.myRating,
     sessions: game?.sessions || [],
@@ -83,7 +82,7 @@ export const GameCard: React.FC<GameCardProps> = ({
         transition: "transform 150ms ease, box-shadow 150ms ease",
         height: '100%',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
       }}
       sx={{
         "&:hover": {
@@ -108,7 +107,7 @@ export const GameCard: React.FC<GameCardProps> = ({
             position: "absolute",
             top: rem(8),
             right: rem(8),
-            background: "rgba(255, 255, 255, 0.8)",
+            background: "rgba(255, 255, 255, 0.9)", // Increased opacity
             borderRadius: rem(4),
             padding: `2px ${rem(4)}`,
           }}
@@ -119,22 +118,30 @@ export const GameCard: React.FC<GameCardProps> = ({
           </Text>
         </Group>
         {safeGame.isOwned && (
-          <Badge
-            color="green"
-            variant="light"
-            style={{ position: "absolute", bottom: rem(8), left: rem(8) }}
-          >
-            Owned
-          </Badge>
+          <Tooltip label="Owned">
+            <ActionIcon
+              variant="filled"
+              color="green"
+              size="sm"
+              style={{
+                position: "absolute",
+                bottom: rem(8),
+                left: rem(8),
+                borderRadius: '50%',
+              }}
+            >
+              <IconCheck size={16} />
+            </ActionIcon>
+          </Tooltip>
         )}
       </Box>
 
       <Stack gap="sm" style={{ flexGrow: 1 }}>
-        <Title order={4} lineClamp={2}>
+        <Title order={4} lineClamp={2} c={mutedColor}> {/* Set title color */}
           {safeGame.title}
         </Title>
 
-        <Group gap="sm">
+        <Group gap="sm" wrap="nowrap">
           <Group gap={rem(4)}>
             <IconUsers size={16} stroke={1.5} color={mutedColor} />
             <Text size="sm" c="dimmed">
@@ -171,8 +178,8 @@ export const GameCard: React.FC<GameCardProps> = ({
           )}
         </Group>
 
-        <Box mt="auto">
-          <Text size="sm" c="dimmed" mb={rem(4)}>
+        <Flex align="center" mt="auto" gap="xs"> {/* Use Flex to align items on one line */}
+          <Text size="sm" c={mutedColor}> {/* Set My Rating color */}
             My Rating:
           </Text>
           {typeof safeGame.myRating === "number" && safeGame.myRating > 0 ? (
@@ -188,7 +195,7 @@ export const GameCard: React.FC<GameCardProps> = ({
               Not rated yet
             </Text>
           )}
-        </Box>
+        </Flex>
       </Stack>
 
       <Flex justify="flex-end" gap="xs" mt="md">
