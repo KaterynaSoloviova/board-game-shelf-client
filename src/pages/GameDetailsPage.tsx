@@ -57,6 +57,15 @@ export default function GameDetailsPage() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
 
+  // Color palette from MyGames page
+  const brandColors = {
+    beige: "#e0d9c4",
+    lightBrown: "#c5b79d",
+    mutedGreen: "#8c947d",
+    darkBrown: "#635841",
+    accent: "#a87e5b",
+  };
+
   const [game, setGame] = useState<GameDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -341,10 +350,11 @@ export default function GameDetailsPage() {
   }
 
   return (
-    <Container size="xl" py="xl">
-      <Stack>
+    <Box bg={brandColors.beige} mih="100vh">
+      <Container size="xl" py="xl">
+        <Stack>
         {/* Top Info Card */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Flex gap="xl" align="flex-start" wrap="wrap">
             {/* Game Cover */}
             {game.coverImage && (
@@ -363,7 +373,11 @@ export default function GameDetailsPage() {
                 <Title order={2}>{game.title}</Title>
                 <Button
                   variant="light"
-                  color="blue"
+                  style={{ 
+                    backgroundColor: brandColors.beige, 
+                    borderColor: brandColors.lightBrown,
+                    color: brandColors.darkBrown
+                  }}
                   leftSection={<IconEdit size={16} />}
                   onClick={() => navigate(`/edit/${game.id}`)}
                 >
@@ -388,7 +402,7 @@ export default function GameDetailsPage() {
         </Paper>
 
         {/* Description Card */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Stack>
             <Text fw={500}>Description:</Text>
             {game.description ? (
@@ -407,7 +421,7 @@ export default function GameDetailsPage() {
 
         {/* Tags Card */}
         {game.tags && game.tags.length > 0 && (
-          <Paper shadow="sm" p="xl" radius="md" withBorder>
+          <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
             <Stack>
               <Text fw={500}>Tags:</Text>
               <Flex gap="xs" wrap="wrap">
@@ -415,13 +429,13 @@ export default function GameDetailsPage() {
                   <Box
                     key={tag.id}
                     style={{
-                      backgroundColor: "#f1f3f4",
+                      backgroundColor: brandColors.beige,
                       padding: "8px 12px",
                       borderRadius: "16px",
-                      border: "1px solid #e0e0e0",
+                      border: `1px solid ${brandColors.lightBrown}`,
                     }}
                   >
-                    <Text size="sm" fw={500} c="dark">
+                    <Text size="sm" fw={500} c={brandColors.darkBrown}>
                       {tag.title}
                     </Text>
                   </Box>
@@ -432,12 +446,16 @@ export default function GameDetailsPage() {
         )}
 
         {/* Files Section */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Flex justify="space-between" align="center" mb="md">
             <Title order={3}>Files</Title>
             <Button
               variant="light"
-              color="green"
+              style={{ 
+                backgroundColor: brandColors.beige, 
+                borderColor: brandColors.lightBrown,
+                color: brandColors.darkBrown
+              }}
               leftSection={<IconPlus size={16} />}
               onClick={() => setAddFileModalOpen(true)}
             >
@@ -499,12 +517,16 @@ export default function GameDetailsPage() {
         </Paper>
 
         {/* Sessions Section */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Flex justify="space-between" align="center" mb="md">
             <Title order={3}>Sessions</Title>
             <Button
               variant="light"
-              color="blue"
+              style={{ 
+                backgroundColor: brandColors.beige, 
+                borderColor: brandColors.lightBrown,
+                color: brandColors.darkBrown
+              }}
               leftSection={<IconPlus size={16} />}
               onClick={() => setAddSessionModalOpen(true)}
             >
@@ -568,9 +590,9 @@ export default function GameDetailsPage() {
             </Text>
           )}
         </Paper>
-      </Stack>
+        </Stack>
 
-      {/* Add Session Modal */}
+        {/* Add Session Modal */}
       <Modal
         opened={addSessionModalOpen}
         onClose={resetSessionForm}
@@ -916,6 +938,7 @@ export default function GameDetailsPage() {
           </Group>
         </Stack>
       </Modal>
-    </Container>
+      </Container>
+    </Box>
   );
 }

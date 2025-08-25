@@ -41,34 +41,15 @@ const HomePage: React.FC = () => {
   const fetchHottestGames = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${BASE_URL}/api/games/`);
+      const response = await axios.get(`${BASE_URL}/api/games/top`);
       
-      // Get games with session counts and sort by most sessions
-      const gamesWithSessions = await Promise.all(
-        response.data.map(async (game: Game) => {
-          try {
-            const sessionsResponse = await axios.get(`${BASE_URL}/api/games/${game.id}/sessions`);
-            return {
-              ...game,
-              sessionCount: sessionsResponse.data?.length || 0
-            };
-          } catch (error) {
-            return {
-              ...game,
-              sessionCount: 0
-            };
-          }
-        })
-      );
-
-      // Sort by session count (most played first) and take top 6
-      const sortedGames = gamesWithSessions
-        .sort((a, b) => b.sessionCount - a.sessionCount)
-        .slice(0, 6);
-
-      setHottestGames(sortedGames);
+      // Take top 6 games from the backend response
+      const topGames = response.data.slice(0, 6);
+      setHottestGames(topGames);
     } catch (error) {
-      console.error("Failed to fetch hottest games:", error);
+      console.error("Failed to fetch top games:", error);
+      // Fallback to empty array if the endpoint fails
+      setHottestGames([]);
     } finally {
       setLoading(false);
     }
@@ -304,7 +285,7 @@ const HomePage: React.FC = () => {
               fontWeight: 600
             }}
           >
-            🎯 Hottest Games - Most Played
+            🎯 Hottest Games
           </Title>
           
           {loading ? (
@@ -313,7 +294,7 @@ const HomePage: React.FC = () => {
             </Center>
           ) : hottestGames.length === 0 ? (
             <Text c="dimmed" ta="center" py="xl">
-              No games found. Start adding games to see the most played ones!
+              No top games found. The backend will rank games based on your criteria!
             </Text>
           ) : (
             <Grid gutter="md">
@@ -370,7 +351,7 @@ const HomePage: React.FC = () => {
                         <IconClock size={16} />
                         <Text size="sm">{game.playTime} min</Text>
                         <IconUsers size={16} />
-                        <Text size="sm">{(game as any).sessionCount || 0} sessions</Text>
+                        <Text size="sm">{game._count?.sessions || 0} sessions</Text>
                       </Group>
                     </Stack>
                   </Card>

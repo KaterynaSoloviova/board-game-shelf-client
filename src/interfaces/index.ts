@@ -25,6 +25,9 @@ export interface Game {
   createdAt: Date;
   updatedAt?: Date;
   tags: Tag[];
+  _count?: {
+    sessions: number;
+  };
 }
 
 export interface Tag {
