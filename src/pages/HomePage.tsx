@@ -18,6 +18,7 @@ import { IconDice, IconUsers, IconClock, IconStar } from '@tabler/icons-react';
 import { Game } from '../interfaces';
 import axios from 'axios';
 import { BASE_URL } from '../config';
+import BoardGamesShelfImage from '../assets/BoardGamesShelf.png';
 import ReactSvg from '../assets/react.svg';
 
 const HomePage: React.FC = () => {
@@ -80,6 +81,50 @@ const HomePage: React.FC = () => {
 
   return (
     <Box bg={brandColors.beige} mih="100vh">
+      {/* Hero Section with BoardGamesShelf Image */}
+      <Box 
+        style={{ 
+          background: `linear-gradient(135deg, ${brandColors.beige} 0%, ${brandColors.lightBrown} 100%)`,
+          padding: '4rem 0',
+          textAlign: 'center'
+        }}
+      >
+        <Container size="xl">
+          <Image
+            src={BoardGamesShelfImage}
+            alt="Board Games Shelf"
+            style={{ 
+              maxWidth: '400px', 
+              margin: '0 auto 2rem',
+              filter: 'drop-shadow(0 10px 20px rgba(99, 88, 65, 0.2))'
+            }}
+          />
+          <Title 
+            order={1} 
+            size="3rem" 
+            c={brandColors.darkBrown}
+            style={{ 
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 700,
+              marginBottom: '1rem'
+            }}
+          >
+            Board Games Shelf
+          </Title>
+          <Text 
+            size="lg" 
+            c={brandColors.mutedGreen}
+            style={{ 
+              fontFamily: 'Inter, sans-serif',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}
+          >
+            Your personal board games library
+          </Text>
+        </Container>
+      </Box>
+
       <Container size="xl" py="xl">
         {/* Welcome Message */}
         <Paper 
