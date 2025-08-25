@@ -4,6 +4,7 @@ import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import HomePage from "./pages/HomePage";
 import MyGames from "./pages/MyGames";
+import AddGame from "./pages/AddGame";
 import GameDetailsPage from "./pages/GameDetailsPage"; 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/games" element={<MyGames />} />
+            <Route path="/addgame" element={<AddGame />} />
             <Route path="/game/:gameId" element={<GameDetailsPage />} />
           </Routes>
           <Footer />

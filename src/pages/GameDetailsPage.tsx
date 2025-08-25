@@ -5,7 +5,6 @@ import {
   Container,
   Title,
   Text,
-  Paper,
   Stack,
   Center,
   Loader,
@@ -13,6 +12,7 @@ import {
   Flex,
   Box,
   Button,
+  Paper,
 } from "@mantine/core";
 import {
   IconFileText,
@@ -24,7 +24,6 @@ import { Game, Session, File } from "../interfaces";
 import { BASE_URL } from "../config";
 
 type GameDetails = Game & {
-  description?: string;
   sessions?: Session[];
   files?: File[];
 };
@@ -47,6 +46,7 @@ export default function GameDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
   useEffect(() => {
     if (!gameId) return;
     setLoading(true);
@@ -56,6 +56,7 @@ export default function GameDetailsPage() {
       .then((res) => {
         const safeGame: GameDetails = {
           id: res.data?.id || "",
+          coverImage: res.data?.coverImage || "",
           title: res.data?.title || "Unknown Game",
           genre: res.data?.genre || "Unknown",
           minPlayers: res.data?.minPlayers ?? 1,
@@ -68,6 +69,10 @@ export default function GameDetailsPage() {
           description: res.data?.description || "No description available.",
           sessions: res.data?.sessions || [],
           files: res.data?.files || [],
+          isOwned: res.data?.isOwned || false,
+          createdAt: res.data?.createdAt || new Date(),
+          updatedAt: res.data?.updatedAt,
+          tags: res.data?.tags || [],
         };
 
         setGame(safeGame);
@@ -106,7 +111,7 @@ export default function GameDetailsPage() {
 
   return (
     <Container size="xl" py="xl">
-      <Stack spacing="lg">
+      <Stack>
         {/* Top Info Card */}
         <Paper shadow="sm" p="xl" radius="md" withBorder>
           <Flex gap="xl" align="flex-start" wrap="wrap">
@@ -122,7 +127,7 @@ export default function GameDetailsPage() {
             )}
 
             {/* Info */}
-            <Stack spacing="md" style={{ flex: 1 }}>
+            <Stack style={{ flex: 1 }}>
               <Title order={2}>{game.title}</Title>
               <Divider />
               <Flex wrap="wrap" gap="md">
@@ -143,7 +148,7 @@ export default function GameDetailsPage() {
 
         {/* Description Card */}
         <Paper shadow="sm" p="xl" radius="md" withBorder>
-          <Stack spacing={4}>
+          <Stack>
             <Text fw={500}>Description:</Text>
             <Text>{game.description}</Text>
           </Stack>
@@ -152,10 +157,10 @@ export default function GameDetailsPage() {
         {/* Files Section */}
         {game.files && game.files.length > 0 && (
           <Paper shadow="sm" p="xl" radius="md" withBorder>
-            <Stack spacing={4}>
+            <Stack>
               <Text fw={500}>Files:</Text>
               {game.files.map((file) => (
-                <Stack key={file.id} spacing={2}>
+                <Stack key={file.id}>
                   <Text>
                     <IconFileText size={16} /> {file.title}
                   </Text>

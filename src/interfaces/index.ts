@@ -10,6 +10,7 @@ export interface Session {
 export interface Game {
   id: string;
   title: string;
+  description?: string;
   genre: string;
   minPlayers: number;
   maxPlayers: number;
@@ -22,7 +23,7 @@ export interface Game {
   sessions: Session[];
   myRating?: number;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
   tags: Tag[];
 }
 
@@ -42,5 +43,3 @@ export interface File {
   title: string;
   link: string;
 }
-
-
