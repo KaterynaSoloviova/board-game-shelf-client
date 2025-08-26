@@ -586,13 +586,13 @@ export const EditGame: React.FC = () => {
                     value={myRating}
                     onChange={(value) => setMyRating(Number.parseInt(value as string) || undefined)}
                     min={0}
-                    max={10}
+                    max={5}
                     step={0.1}
                     size="md"
                     leftSection={<IconHeart size={16} />}
                     rightSection={
                       <Text size="xs" c="dimmed">
-                        /10
+                        /5
                       </Text>
                     }
                     description="Your personal rating for this game"
@@ -697,7 +697,7 @@ export const EditGame: React.FC = () => {
                             </Text>
                           </Group>
                         ) : coverImage ? (
-                          <Text size="xs" style={{ color: '#8B9A6A' }}>
+                          <Text size="xs" style={{ color: '#AAC27A' }}>
                             ✓ Image uploaded successfully!
                           </Text>
                         ) : (
