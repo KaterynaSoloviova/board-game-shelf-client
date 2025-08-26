@@ -6,9 +6,11 @@ import {
   Flex,
   Paper,
   Group,
+  Image,
 } from '@mantine/core';
-import { IconDice, IconLogin, IconLogout } from '@tabler/icons-react';
+import { IconLogin, IconLogout } from '@tabler/icons-react';
 import { useState } from 'react';
+import HeaderIcon from '../assets/header_icon.png';
 
 function Header() {
   const navigate = useNavigate();
@@ -46,8 +48,7 @@ function Header() {
 
   return (
     <Paper 
-      shadow="sm" 
-      py="md" 
+      shadow="sm"
       withBorder 
       style={{ 
         borderColor: brandColors.lightBrown, 
@@ -60,11 +61,18 @@ function Header() {
       <Container size="xl">
         <Flex justify="space-between" align="center">
           {/* Project Logo and Name */}
-          <Group gap="sm">
-            <IconDice 
-              size={32} 
-              color={brandColors.accent}
-              style={{ filter: 'drop-shadow(0 2px 4px rgba(99, 88, 65, 0.2))' }}
+          <Flex gap="sm" align="center">
+            <Image
+              src={HeaderIcon}
+              alt="Board Games Shelf"
+              width={80}
+              height={80}
+              py="xs"
+              fit="contain"
+              style={{ 
+                filter: 'drop-shadow(0 2px 4px rgba(99, 88, 65, 0.2))',
+                marginLeft: '-20px'
+              }}
             />
             <Text 
               size="xl" 
@@ -72,13 +80,14 @@ function Header() {
               c={brandColors.darkBrown}
               style={{ 
                 fontFamily: 'Inter, sans-serif',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
               }}
               onClick={() => handleNavigation('/')}
             >
               Board Games Shelf
             </Text>
-          </Group>
+          </Flex>
 
           {/* Navigation Buttons */}
           <Group gap="md">

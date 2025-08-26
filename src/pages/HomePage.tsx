@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
       <Box 
         style={{ 
           background: `linear-gradient(135deg, ${brandColors.beige} 0%, ${brandColors.lightBrown} 100%)`,
-          padding: '2rem 0',
+          padding: '1rem 0',
           textAlign: 'center'
         }}
       >
@@ -106,13 +106,13 @@ const HomePage: React.FC = () => {
         </Container>
       </Box>
 
-      <Container size="xl" py="xl">
+      <Container size="xl" py="lg">
         {/* Welcome Message */}
         <Paper 
           shadow="sm" 
           p="xl" 
           radius="md" 
-          mb="xl" 
+          mb="lg" 
           style={{ 
             backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`,
