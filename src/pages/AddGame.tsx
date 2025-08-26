@@ -470,7 +470,7 @@ export const AddGame: React.FC = () => {
 
                 <Grid.Col span={12}>
                   <NumberInput
-                    label="Your Rating"
+                    label="Rating"
                     value={rating}
                     onChange={(value) => setRating(Number.parseInt(value as string) || 0)}
                     min={0}
@@ -589,7 +589,7 @@ export const AddGame: React.FC = () => {
                         width={150}
                         height={200}
                         radius="md"
-                        fit="cover"
+                        fit="contain"
                       />
                       <Stack gap="xs" style={{ flex: 1 }}>
                         <Text size="sm" fw={500}>
