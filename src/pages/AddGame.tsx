@@ -37,6 +37,7 @@ import {
   IconAlignLeft,
   IconAlignCenter,
   IconAlignRight,
+  IconAlignJustified,
   IconUsers,
   IconClock,
   IconStar,
@@ -368,6 +369,15 @@ export const AddGame: React.FC = () => {
                       size="sm"
                     >
                       <IconAlignRight size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Align Justify">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'justify' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('justify').run()}
+                      size="sm"
+                    >
+                      <IconAlignJustified size={14} />
                     </ActionIcon>
                   </Tooltip>
 

@@ -32,6 +32,12 @@ import {
   IconInfoCircle,
   IconBold,
   IconItalic,
+  IconUnderline,
+  IconStrikethrough,
+  IconAlignLeft,
+  IconAlignCenter,
+  IconAlignRight,
+  IconAlignJustified,
   IconUsers,
   IconClock,
   IconStar,
@@ -55,6 +61,14 @@ export const EditGame: React.FC = () => {
   const navigate = useNavigate();
   const { gameId } = useParams<{ gameId: string }>();
   const { tagOptions, addNewTag } = useTags();
+
+  const brandColors = {
+    beige: "#e0d9c4",
+    lightBrown: "#c5b79d",
+    mutedGreen: "#8c947d",
+    darkBrown: "#635841",
+    accent: "#a87e5b",
+  };
 
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
@@ -222,11 +236,11 @@ export const EditGame: React.FC = () => {
 
   if (loading) {
     return (
-      <Container size="md" py="xl">
-        <Card shadow="lg" padding="xl" radius="md">
+      <Container size="lg" py="lg">
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Group justify="center" py="xl">
-            <Loader size="lg" />
-            <Text>Loading game data...</Text>
+            <Loader size="lg" color={brandColors.accent} />
+            <Text c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Loading game data...</Text>
           </Group>
         </Card>
       </Container>
@@ -235,12 +249,21 @@ export const EditGame: React.FC = () => {
 
   if (error || !game) {
     return (
-      <Container size="md" py="xl">
-        <Card shadow="lg" padding="xl" radius="md">
+      <Container size="lg" py="lg">
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Alert color="red" icon={<IconInfoCircle size={16} />}>
             {error || "Game not found"}
           </Alert>
-          <Button mt="md" onClick={() => navigate("/mygames")}>
+          <Button 
+            mt="md" 
+            style={{
+              backgroundColor: brandColors.accent,
+              borderColor: brandColors.lightBrown,
+              color: 'white',
+              fontWeight: 600
+            }}
+            onClick={() => navigate("/mygames")}
+          >
             Back to My Games
           </Button>
         </Card>
@@ -249,22 +272,25 @@ export const EditGame: React.FC = () => {
   }
 
   return (
-    <Container size="md" py="xl">
-      <Card shadow="lg" padding="xl" radius="md">
+    <Container size="lg" py="lg">
+      <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
         {/* Header */}
         <Group align="center" mb="xl">
           <ActionIcon
             size="xl"
-            variant="gradient"
-            gradient={{ from: "orange", to: "red" }}
+            variant="filled"
+            style={{
+              backgroundColor: brandColors.accent,
+              color: 'white'
+            }}
           >
             <IconEdit size={24} />
           </ActionIcon>
           <div>
-            <Title order={2} c="dark">
+            <Title order={2} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
               Edit Game: {game.title}
             </Title>
-            <Text size="sm" c="dimmed">
+            <Text size="sm" c={brandColors.mutedGreen} style={{ fontFamily: 'Inter, sans-serif' }}>
               Update your board game information
             </Text>
           </div>
@@ -280,10 +306,10 @@ export const EditGame: React.FC = () => {
         >
           <Stack gap="lg">
             {/* Basic Information Section */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconInfoCircle size={18} />
-                <Text fw={500}>Basic Information</Text>
+                <IconInfoCircle size={18} color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Basic Information</Text>
               </Group>
 
               <Grid>
@@ -322,12 +348,17 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Game Description */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
-              <Text fw={500} mb="md">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+              <Text fw={500} mb="md" c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
                 Game Description
               </Text>
-              <Card shadow="sm" padding="xs" radius="md" bg="white">
-                <Group mb="xs" gap="xs">
+              <Card shadow="sm" padding="xs" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+                <Group mb="md" gap="md" justify="flex-start" style={{ 
+                  borderBottom: `1px solid ${brandColors.lightBrown}`,
+                  paddingBottom: "12px",
+                  width: "100%"
+                }}>
+                  {/* Text Formatting */}
                   <Tooltip label="Bold">
                     <ActionIcon
                       variant={editor?.isActive("bold") ? "filled" : "light"}
@@ -348,13 +379,122 @@ export const EditGame: React.FC = () => {
                       <IconItalic size={14} />
                     </ActionIcon>
                   </Tooltip>
+                  <Tooltip label="Underline">
+                    <ActionIcon
+                      variant={editor?.isActive("underline") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                      size="sm"
+                    >
+                      <IconUnderline size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Strikethrough">
+                    <ActionIcon
+                      variant={editor?.isActive("strike") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleStrike().run()}
+                      size="sm"
+                    >
+                      <IconStrikethrough size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+
+                  {/* Headings */}
+                  <Tooltip label="Heading 1">
+                    <ActionIcon
+                      variant={editor?.isActive("heading", { level: 1 }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+                      size="sm"
+                    >
+                      H1
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Heading 2">
+                    <ActionIcon
+                      variant={editor?.isActive("heading", { level: 2 }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                      size="sm"
+                    >
+                      H2
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Heading 3">
+                    <ActionIcon
+                      variant={editor?.isActive("heading", { level: 3 }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+                      size="sm"
+                    >
+                      H3
+                    </ActionIcon>
+                  </Tooltip>
+
+                  {/* Lists */}
+                  <Tooltip label="Bullet List">
+                    <ActionIcon
+                      variant={editor?.isActive("bulletList") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                      size="sm"
+                    >
+                      • List
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Numbered List">
+                    <ActionIcon
+                      variant={editor?.isActive("orderedList") ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                      size="sm"
+                    >
+                      1. List
+                    </ActionIcon>
+                  </Tooltip>
+
+                  {/* Text Alignment */}
+                  <Tooltip label="Align Left">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'left' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+                      size="sm"
+                    >
+                      <IconAlignLeft size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Align Center">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'center' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+                      size="sm"
+                    >
+                      <IconAlignCenter size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Align Right">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'right' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+                      size="sm"
+                    >
+                      <IconAlignRight size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Align Justify">
+                    <ActionIcon
+                      variant={editor?.isActive({ textAlign: 'justify' }) ? "filled" : "light"}
+                      onClick={() => editor?.chain().focus().setTextAlign('justify').run()}
+                      size="sm"
+                    >
+                      <IconAlignJustified size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+
                 </Group>
                 <Box
                   style={{
-                    border: "1px solid #e9ecef",
-                    borderRadius: 8,
-                    minHeight: 120,
+                    border: `2px solid ${brandColors.lightBrown}`,
+                    borderRadius: 16,
+                    minHeight: 300,
                     backgroundColor: "white",
+                    padding: "24px",
+                    width: "100%",
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}
                 >
                   <EditorContent editor={editor} />
@@ -363,10 +503,10 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Game Details */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconUsers size={18} />
-                <Text fw={500}>Game Details</Text>
+                <IconUsers size={18} color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Game Details</Text>
               </Group>
 
               <Grid>
@@ -422,7 +562,7 @@ export const EditGame: React.FC = () => {
 
                 <Grid.Col span={12}>
                   <NumberInput
-                    label="Your Rating"
+                    label="Rating"
                     value={rating}
                     onChange={(value) => setRating(Number.parseInt(value as string) || 0)}
                     min={0}
@@ -472,7 +612,7 @@ export const EditGame: React.FC = () => {
                         isOwned ? (
                           <IconHeartFilled size={12} color="red" />
                         ) : (
-                          <IconHeart size={12} />
+                          <IconHeart size={12} color="red" />
                         )
                       }
                     />
@@ -485,10 +625,10 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Cover Image */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconPhoto size={18} />
-                <Text fw={500}>Cover Image</Text>
+                <IconPhoto size={18} color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Cover Image</Text>
               </Group>
 
               <Stack gap="md">
@@ -526,7 +666,8 @@ export const EditGame: React.FC = () => {
                         width={150}
                         height={200}
                         radius="md"
-                        fit="cover"
+                        fit="contain"
+                        style={{ objectFit: 'contain' }}
                       />
                       <Stack gap="xs" style={{ flex: 1 }}>
                         <Text size="sm" fw={500}>
@@ -540,7 +681,7 @@ export const EditGame: React.FC = () => {
                             </Text>
                           </Group>
                         ) : coverImage ? (
-                          <Text size="xs" c="green">
+                          <Text size="xs" style={{ color: '#8B9A6A' }}>
                             ✓ Image uploaded successfully!
                           </Text>
                         ) : (
@@ -550,8 +691,13 @@ export const EditGame: React.FC = () => {
                         )}
                         <Button
                           variant="light"
-                          color="red"
                           size="xs"
+                          style={{
+                            backgroundColor: '#B07770',
+                            borderColor: '#B07770',
+                            color: 'white',
+                            fontWeight: 600
+                          }}
                           leftSection={<IconTrash size={14} />}
                           onClick={() => {
                             setCoverImage("");
@@ -569,10 +715,10 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Tags */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconTag size={18} />
-                <Text fw={500}>Tags & Categories</Text>
+                <IconTag size="18" color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Tags & Categories</Text>
               </Group>
 
               <MultiSelect
@@ -610,6 +756,12 @@ export const EditGame: React.FC = () => {
                 />
                 <Button
                   size="sm"
+                  style={{
+                    backgroundColor: brandColors.accent,
+                    borderColor: brandColors.lightBrown,
+                    color: 'white',
+                    fontWeight: 600
+                  }}
                   onClick={() => {
                     const normalized = newTag.trim();
                     if (!normalized) return;
@@ -631,10 +783,15 @@ export const EditGame: React.FC = () => {
                       key={index}
                       variant="light"
                       size="sm"
+                      style={{
+                        backgroundColor: '#99B5A3',
+                        color: 'white',
+                        border: `1px solid #99B5A3`
+                      }}
                       rightSection={
                         <ActionIcon
                           size="xs"
-                          color="gray"
+                          color="white"
                           radius="xl"
                           variant="transparent"
                           onClick={() => removeTag(tag)}
@@ -657,18 +814,29 @@ export const EditGame: React.FC = () => {
             <Group justify="flex-end" mt="xl">
               <Button
                 variant="light"
-                color="gray"
+                style={{
+                  backgroundColor: '#B07770',
+                  borderColor: '#B07770',
+                  color: 'white',
+                  fontWeight: 600,
+                  padding: '12px 24px'
+                }}
                 onClick={() => navigate(`/game/${gameId}`)}
                 size="md"
               >
                 Cancel
               </Button>
               <Button
-                gradient={{ from: "orange", to: "red" }}
-                variant="gradient"
-                size="md"
+                style={{
+                  backgroundColor: brandColors.accent,
+                  borderColor: brandColors.lightBrown,
+                  color: 'white',
+                  fontWeight: 600,
+                  padding: '12px 24px'
+                }}
                 onClick={handleSubmit}
                 leftSection={<IconEdit size={18} />}
+                size="md"
               >
                 Update Game
               </Button>
