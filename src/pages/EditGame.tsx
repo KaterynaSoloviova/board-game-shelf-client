@@ -32,15 +32,6 @@ import {
   IconInfoCircle,
   IconBold,
   IconItalic,
-  IconUnderline,
-  IconStrikethrough,
-  IconList,
-  IconListNumbers,
-  IconAlignLeft,
-  IconAlignCenter,
-  IconAlignRight,
-  IconArrowBackUp,
-  IconArrowForwardUp,
   IconUsers,
   IconClock,
   IconStar,
@@ -63,7 +54,7 @@ import { useTags } from "../hooks/useTags";
 export const EditGame: React.FC = () => {
   const navigate = useNavigate();
   const { gameId } = useParams<{ gameId: string }>();
-  const { tagOptions, loading: tagsLoading, error: tagsError, addNewTag } = useTags();
+  const { tagOptions, addNewTag } = useTags();
 
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
@@ -383,7 +374,7 @@ export const EditGame: React.FC = () => {
                   <NumberInput
                     label="Min Players"
                     value={minPlayers}
-                    onChange={(value) => setMinPlayers(value || 1)}
+                    onChange={(value) => setMinPlayers(Number.parseInt(value as string) || 1)}
                     min={1}
                     max={20}
                     size="md"
@@ -395,7 +386,7 @@ export const EditGame: React.FC = () => {
                   <NumberInput
                     label="Max Players"
                     value={maxPlayers}
-                    onChange={(value) => setMaxPlayers(value || 1)}
+                    onChange={(value) => setMaxPlayers(Number.parseInt(value as string) || 1)}
                     min={minPlayers}
                     max={20}
                     size="md"
@@ -406,7 +397,7 @@ export const EditGame: React.FC = () => {
                   <NumberInput
                     label="Play Time"
                     value={playTime}
-                    onChange={(value) => setPlayTime(value || 30)}
+                    onChange={(value) => setPlayTime(Number.parseInt(value as string) || 30)}
                     min={5}
                     max={600}
                     size="md"
@@ -433,11 +424,10 @@ export const EditGame: React.FC = () => {
                   <NumberInput
                     label="Your Rating"
                     value={rating}
-                    onChange={(value) => setRating(value || 0)}
+                    onChange={(value) => setRating(Number.parseInt(value as string) || 0)}
                     min={0}
                     max={10}
                     step={0.1}
-                    precision={1}
                     size="md"
                     leftSection={<IconStar size={16} />}
                     rightSection={
@@ -453,11 +443,10 @@ export const EditGame: React.FC = () => {
                   <NumberInput
                     label="My Personal Rating"
                     value={myRating}
-                    onChange={(value) => setMyRating(value || undefined)}
+                    onChange={(value) => setMyRating(Number.parseInt(value as string) || undefined)}
                     min={0}
                     max={10}
                     step={0.1}
-                    precision={1}
                     size="md"
                     leftSection={<IconHeart size={16} />}
                     rightSection={
@@ -590,7 +579,6 @@ export const EditGame: React.FC = () => {
                 label="Game Tags"
                 placeholder="Add tags to categorize your game"
                 value={tags}
-                onChange={(selected: string[]) => setTags(selected)}
                 data={tagOptions}
                 searchable
                 clearable
