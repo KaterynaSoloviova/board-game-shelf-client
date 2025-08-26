@@ -384,25 +384,25 @@ export default function GameDetailsPage() {
                 />
               )}
               
-              {/* Status */}
-              <Box style={{ marginTop: '1rem' }}>
-                <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Status
-                </Text>
-                <Text 
-                  size="md" 
-                  c={game.isOwned ? brandColors.mutedGreen : brandColors.darkBrown}
-                  fw={600}
-                  style={{ 
-                    padding: '4px 12px', 
-                    backgroundColor: game.isOwned ? `${brandColors.mutedGreen}20` : `${brandColors.darkBrown}20`,
-                    borderRadius: '20px',
-                    display: 'inline-block'
-                  }}
-                >
-                  {game.isOwned ? "On the shelf" : "Not Owned"}
-                </Text>
-              </Box>
+                           {/* Status */}
+             <Box style={{ marginTop: '1rem' }}>
+               <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                 Status
+               </Text>
+               <Text
+                 size="md"
+                 c="white"
+                 fw={600}
+                 style={{
+                   padding: '4px 12px',
+                   backgroundColor: '#B07770',
+                   borderRadius: '20px',
+                   display: 'inline-block'
+                 }}
+               >
+                 {game.isOwned ? "On the shelf" : "Not Owned"}
+               </Text>
+             </Box>
             </Box>
 
             {/* Right Section: Game Info */}
@@ -410,22 +410,22 @@ export default function GameDetailsPage() {
               {/* Header: Rating, Title, Edit Button */}
               <Flex justify="space-between" align="flex-start">
                 <Flex align="center" gap="lg">
-                  {/* Rating Badge */}
-                  <Box
-                    style={{
-                      backgroundColor: brandColors.beige,
-                      padding: '12px 16px',
-                      borderRadius: '12px',
-                      border: `2px solid ${brandColors.lightBrown}`,
-                      minWidth: '70px',
-                      textAlign: 'center',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    <Text fw={700} size="xl" c={brandColors.darkBrown}>
-                      {game.rating.toFixed(1)}
-                    </Text>
-                  </Box>
+                                   {/* Rating Badge */}
+                 <Box
+                   style={{
+                     backgroundColor: '#AAC27A',
+                     padding: '12px 16px',
+                     borderRadius: '12px',
+                     border: `2px solid #AAC27A`,
+                     minWidth: '70px',
+                     textAlign: 'center',
+                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                   }}
+                 >
+                   <Text fw={700} size="xl" c="white">
+                     {game.rating.toFixed(1)}
+                   </Text>
+                 </Box>
                   
                   {/* Game Title */}
                   <Title order={1} size="2.5rem" c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -433,21 +433,22 @@ export default function GameDetailsPage() {
                   </Title>
                 </Flex>
                 
-                {/* Edit Button */}
-                <Button
-                  variant="light"
-                  size="md"
-                  style={{ 
-                    backgroundColor: brandColors.beige, 
-                    borderColor: brandColors.lightBrown,
-                    color: brandColors.darkBrown,
-                    fontWeight: 600
-                  }}
-                  leftSection={<IconEdit size={18} />}
-                  onClick={() => navigate(`/edit/${game.id}`)}
-                >
-                  Edit Game
-                </Button>
+                               {/* Edit Button */}
+               <Button
+                 variant="light"
+                 size="md"
+                 style={{
+                   backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige,
+                   borderColor: brandColors.lightBrown,
+                   color: isInWishlist ? 'white' : brandColors.darkBrown,
+                   fontWeight: 600,
+                   padding: '12px 24px'
+                 }}
+                 leftSection={<IconEdit size={18} />}
+                 onClick={() => navigate(`/edit/${game.id}`)}
+               >
+                 Edit Game
+               </Button>
               </Flex>
 
               {/* Game Stats Grid */}
@@ -532,10 +533,10 @@ export default function GameDetailsPage() {
                        <Box
                          key={tag.id}
                          style={{
-                           backgroundColor: brandColors.accent,
+                           backgroundColor: '#99B5A3',
                            padding: "6px 12px",
                            borderRadius: "20px",
-                           border: `1px solid ${brandColors.accent}`,
+                           border: `1px solid #99B5A3`,
                          }}
                        >
                          <Text size="sm" fw={600} c="white">
@@ -575,7 +576,6 @@ export default function GameDetailsPage() {
         {/* Description Card */}
         <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
           <Stack>
-            <Text fw={500}>Description:</Text>
             {game.description ? (
               <div 
                 dangerouslySetInnerHTML={{ __html: game.description }}
@@ -598,12 +598,15 @@ export default function GameDetailsPage() {
             <Title order={3}>Files</Title>
             <Button
               variant="light"
+              size="md"
               style={{ 
-                backgroundColor: brandColors.beige, 
+                backgroundColor: brandColors.accent, 
                 borderColor: brandColors.lightBrown,
-                color: brandColors.darkBrown
+                color: 'white',
+                fontWeight: 600,
+                padding: '12px 24px'
               }}
-              leftSection={<IconPlus size={16} />}
+              leftSection={<IconPlus size={18} />}
               onClick={() => setAddFileModalOpen(true)}
             >
               Add File
@@ -628,7 +631,13 @@ export default function GameDetailsPage() {
                       <Button
                         variant="light"
                         size="sm"
-                        leftSection={<IconExternalLink size={14} />}
+                        style={{
+                          backgroundColor: brandColors.beige,
+                          borderColor: brandColors.lightBrown,
+                          color: brandColors.darkBrown,
+                          fontWeight: 600
+                        }}
+                        leftSection={<IconExternalLink size={16} />}
                         onClick={() => handleFileOpen(file)}
                       >
                         Open
@@ -636,7 +645,13 @@ export default function GameDetailsPage() {
                       <Button
                         variant="light"
                         size="sm"
-                        leftSection={<IconDownload size={14} />}
+                        style={{
+                          backgroundColor: brandColors.beige,
+                          borderColor: brandColors.lightBrown,
+                          color: brandColors.darkBrown,
+                          fontWeight: 600
+                        }}
+                        leftSection={<IconDownload size={16} />}
                         onClick={() => handleFileDownload(file)}
                       >
                         Download
@@ -669,12 +684,15 @@ export default function GameDetailsPage() {
             <Title order={3}>Sessions</Title>
             <Button
               variant="light"
+              size="md"
               style={{ 
-                backgroundColor: brandColors.beige, 
+                backgroundColor: brandColors.accent, 
                 borderColor: brandColors.lightBrown,
-                color: brandColors.darkBrown
+                color: 'white',
+                fontWeight: 600,
+                padding: '12px 24px'
               }}
-              leftSection={<IconPlus size={16} />}
+              leftSection={<IconPlus size={18} />}
               onClick={() => setAddSessionModalOpen(true)}
             >
               Add session
@@ -746,8 +764,9 @@ export default function GameDetailsPage() {
         title="Add a new session"
         size="md"
         styles={{
-          title: { color: 'green', fontWeight: 600 },
-          header: { borderBottom: '2px solid green' }
+          title: { color: brandColors.darkBrown, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
+          header: { borderBottom: `2px solid ${brandColors.lightBrown}`, backgroundColor: brandColors.beige },
+          body: { backgroundColor: 'white' }
         }}
       >
         <Stack gap="md">
@@ -854,10 +873,28 @@ export default function GameDetailsPage() {
 
           {/* Action Buttons */}
           <Group justify="flex-end" mt="md">
-            <Button variant="light" color="gray" onClick={resetSessionForm}>
+            <Button 
+              variant="light" 
+              style={{
+                backgroundColor: brandColors.beige,
+                borderColor: brandColors.lightBrown,
+                color: brandColors.darkBrown,
+                fontWeight: 600
+              }}
+              onClick={resetSessionForm}
+            >
               Cancel
             </Button>
-            <Button color="blue" onClick={handleAddSession} disabled={!sessionDate.trim()}>
+            <Button 
+              style={{
+                backgroundColor: brandColors.accent,
+                borderColor: brandColors.lightBrown,
+                color: 'white',
+                fontWeight: 600
+              }}
+              onClick={handleAddSession} 
+              disabled={!sessionDate.trim()}
+            >
               Add Session
             </Button>
           </Group>
@@ -871,8 +908,9 @@ export default function GameDetailsPage() {
         title="Edit session"
         size="md"
         styles={{
-          title: { color: 'green', fontWeight: 600 },
-          header: { borderBottom: '2px solid green' }
+          title: { color: brandColors.darkBrown, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
+          header: { borderBottom: `2px solid ${brandColors.lightBrown}`, backgroundColor: brandColors.beige },
+          body: { backgroundColor: 'white' }
         }}
       >
         <Stack gap="md">
