@@ -565,7 +565,7 @@ export const EditGame: React.FC = () => {
                   <NumberInput
                     label="Rating"
                     value={rating}
-                    onChange={(value) => setRating(Number.parseInt(value as string) || 0)}
+                    onChange={(value) => setRating(Number.parseFloat(value as string) || 0)}
                     min={0}
                     max={10}
                     step={0.1}
