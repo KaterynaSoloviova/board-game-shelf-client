@@ -39,7 +39,6 @@ export const GameCard: React.FC<GameCardProps> = ({
   onDelete,
   onEdit,
   accentColor = "#a87e5b",
-  mutedColor = "#635841",
 }) => {
   // Color palette from MyGames page
   const brandColors = {

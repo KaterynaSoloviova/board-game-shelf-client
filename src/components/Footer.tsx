@@ -1,4 +1,4 @@
-import { Container, Text, Paper, Flex, Group } from '@mantine/core';
+import { Container, Text, Paper, Flex } from '@mantine/core';
 import { IconDice } from '@tabler/icons-react';
 
 function Footer() {
