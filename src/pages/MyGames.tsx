@@ -21,7 +21,7 @@ import {
   Loader,
   Center,
 } from "@mantine/core";
-import { IconSearch, IconFilter, IconX } from "@tabler/icons-react";
+import { IconSearch, IconFilter, IconX, IconChess } from "@tabler/icons-react";
 import { Game, Tag } from "../interfaces";
 import axios from "axios";
 import { BASE_URL } from "../config";
@@ -191,10 +191,17 @@ const MyGames: React.FC = () => {
 
   return (
     <Box bg={brandColors.beige} mih="100vh">
-      <Paper shadow="sm" py="xl" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: brandColors.beige }}>
+      <Paper shadow="sm" py="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: brandColors.beige }}>
         <Container size="xl">
           <Flex justify="space-between" align="center">
-            <Title order={1} c={brandColors.darkBrown}>My Games</Title>
+            <Flex align="center" gap="sm">
+              <IconChess 
+                size={32} 
+                color="#9A6A63"
+                style={{ filter: 'drop-shadow(0 2px 4px rgba(99, 88, 65, 0.2))' }}
+              />
+              <Title order={1} c="#9A6A63">My Games</Title>
+            </Flex>
             <Text c={brandColors.mutedGreen} size="sm">
               {filteredGames.length} game{filteredGames.length !== 1 ? "s" : ""}{" "}
               in collection
@@ -204,7 +211,7 @@ const MyGames: React.FC = () => {
       </Paper>
 
       <Container size="xl" py="xl">
-        <Paper shadow="sm" p="lg" radius="md" mb="xl" style={{ backgroundColor: "white" }}>
+        <Paper shadow="sm" p="md" radius="md" mb="lg" style={{ backgroundColor: "#f0f0eb" }}>
           <TextInput
             placeholder="Search games..."
             value={searchTerm}
@@ -221,7 +228,7 @@ const MyGames: React.FC = () => {
                 </ActionIcon>
               )
             }
-            mb="md"
+            mb="sm"
             styles={{ input: { borderColor: brandColors.lightBrown } }}
           />
 
@@ -230,7 +237,7 @@ const MyGames: React.FC = () => {
             leftSection={<IconFilter style={{ width: rem(16), height: rem(16) }} />}
             onClick={() => setShowFilters(!showFilters)}
             c={brandColors.mutedGreen}
-            mb="md"
+            mb="sm"
           >
             {showFilters ? "Hide Filters" : "Show Filters"}
           </Button>
