@@ -65,7 +65,7 @@ export const EditGame: React.FC = () => {
   const brandColors = {
     beige: "#e0d9c4",
     lightBrown: "#c5b79d",
-    mutedGreen: "#8c947d",
+    mutedGreen: "#6b8e23",
     darkBrown: "#635841",
     accent: "#a87e5b",
   };
@@ -237,7 +237,7 @@ export const EditGame: React.FC = () => {
   if (loading) {
     return (
       <Container size="lg" py="lg">
-        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
           <Group justify="center" py="xl">
             <Loader size="lg" color={brandColors.accent} />
             <Text c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Loading game data...</Text>
@@ -250,7 +250,7 @@ export const EditGame: React.FC = () => {
   if (error || !game) {
     return (
       <Container size="lg" py="lg">
-        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
           <Alert color="red" icon={<IconInfoCircle size={16} />}>
             {error || "Game not found"}
           </Alert>
@@ -272,8 +272,9 @@ export const EditGame: React.FC = () => {
   }
 
   return (
-    <Container size="lg" py="lg">
-      <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+    <Box bg={brandColors.beige} mih="100vh">
+      <Container size="lg" py="lg">
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
         {/* Header */}
         <Group align="center" mb="xl">
           <ActionIcon
@@ -296,7 +297,7 @@ export const EditGame: React.FC = () => {
           </div>
         </Group>
 
-        <Divider mb="xl" />
+        <Divider mb="md" />
 
         <form
           onSubmit={(e) => {
@@ -304,9 +305,9 @@ export const EditGame: React.FC = () => {
             handleSubmit();
           }}
         >
-          <Stack gap="lg">
+          <Stack gap="md">
             {/* Basic Information Section */}
-            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
               <Group align="center" mb="md">
                 <IconInfoCircle size={18} color={brandColors.accent} />
                 <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Basic Information</Text>
@@ -348,11 +349,11 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Game Description */}
-            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
               <Text fw={500} mb="md" c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
                 Game Description
               </Text>
-              <Card shadow="sm" padding="xs" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+              <Card shadow="sm" padding="xs" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
                 <Group mb="md" gap="md" justify="flex-start" style={{ 
                   borderBottom: `1px solid ${brandColors.lightBrown}`,
                   paddingBottom: "12px",
@@ -491,7 +492,7 @@ export const EditGame: React.FC = () => {
                     border: `2px solid ${brandColors.lightBrown}`,
                     borderRadius: 16,
                     minHeight: 300,
-                    backgroundColor: "white",
+                    backgroundColor: "#f0f0eb",
                     padding: "24px",
                     width: "100%",
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
@@ -503,7 +504,7 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Game Details */}
-            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
               <Group align="center" mb="md">
                 <IconUsers size={18} color={brandColors.accent} />
                 <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Game Details</Text>
@@ -614,7 +615,7 @@ export const EditGame: React.FC = () => {
                           borderColor: brandColors.lightBrown
                         },
                         thumb: {
-                          backgroundColor: 'white',
+                          backgroundColor: '#f0f0eb',
                           borderColor: brandColors.lightBrown
                         },
                         label: {
@@ -640,7 +641,7 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Cover Image */}
-            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
               <Group align="center" mb="md">
                 <IconPhoto size={18} color={brandColors.accent} />
                 <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Cover Image</Text>
@@ -673,7 +674,7 @@ export const EditGame: React.FC = () => {
                 )}
 
                 {(coverImage || imagePreview) && (
-                  <Card shadow="sm" padding="md" radius="md" bg="white">
+                  <Card shadow="sm" padding="md" radius="md" bg="#f0f0eb">
                     <Group align="flex-start" gap="md">
                       <Image
                         src={coverImage || imagePreview}
@@ -730,7 +731,7 @@ export const EditGame: React.FC = () => {
             </Paper>
 
             {/* Tags */}
-            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
               <Group align="center" mb="md">
                 <IconTag size="18" color={brandColors.accent} />
                 <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Tags & Categories</Text>
@@ -865,7 +866,8 @@ export const EditGame: React.FC = () => {
           </Stack>
         </form>
       </Card>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
