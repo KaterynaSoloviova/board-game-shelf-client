@@ -372,44 +372,47 @@ export default function GameDetailsPage() {
         <Stack gap="lg">
         {/* Top Info Card */}
         <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
-          <Flex gap="xl" align="flex-start">
-            {/* Left Section: Game Cover and Status */}
-            <Box style={{ minWidth: 280, maxWidth: 280 }}>
-              {game.coverImage && (
-                <img
-                  src={game.coverImage}
-                  alt={game.title}
-                  style={{ 
-                    width: "100%", 
-                    borderRadius: 12,
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
-                  }}
-                />
-              )}
-              
-                           {/* Status */}
-             <Box style={{ marginTop: '1rem' }}>
-               <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                 Status
-               </Text>
-               <Text
-                 size="md"
-                 c="white"
-                 fw={600}
-                 style={{
-                   padding: '4px 12px',
-                   backgroundColor: '#B07770',
-                   borderRadius: '20px',
-                   display: 'inline-block'
-                 }}
-               >
-                 {game.isOwned ? "On the shelf" : "Not Owned"}
-               </Text>
-             </Box>
-            </Box>
+          <Grid gutter="xl">
+            {/* Left Column: Image and Status */}
+            <Grid.Col span={4}>
+              <Stack gap="lg">
+                {/* Game Cover Image */}
+                {game.coverImage && (
+                  <img
+                    src={game.coverImage}
+                    alt={game.title}
+                    style={{ 
+                      width: "100%", 
+                      borderRadius: 16,
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
+                    }}
+                  />
+                )}
+                
+                {/* Status Badge */}
+                <Box>
+                  <Text
+                    size="md"
+                    c="white"
+                    fw={600}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#B07770',
+                      borderRadius: '20px',
+                      display: 'inline-block',
+                      textAlign: 'center',
+                      width: '100%'
+                    }}
+                  >
+                    {game.isOwned ? "On the shelf" : "Not Owned"}
+                  </Text>
+                </Box>
+              </Stack>
+            </Grid.Col>
 
-            {/* Right Section: Game Info */}
-            <Stack style={{ flex: 1 }} gap="md">
+            {/* Right Column: Game Info */}
+            <Grid.Col span={8}>
+              <Stack gap="lg">
               {/* Header: Rating, Title, Edit Button */}
               <Flex justify="space-between" align="flex-start">
                 <Flex align="center" gap="lg">
@@ -536,11 +539,7 @@ export default function GameDetailsPage() {
                            {/* Tags */}
              {game.tags && game.tags.length > 0 && (
                <Box>
-                 <Flex align="center" gap="xs">
-                   <Text fw={600} size="md" c={brandColors.darkBrown} style={{ textAlign: 'left' }}>
-                     Tags:
-                   </Text>
-                   <Flex gap="sm" wrap="wrap">
+                 <Flex gap="sm" wrap="wrap">
                      {game.tags.map((tag) => (
                        <Box
                          key={tag.id}
@@ -557,8 +556,7 @@ export default function GameDetailsPage() {
                        </Box>
                      ))}
                    </Flex>
-                 </Flex>
-               </Box>
+                 </Box>
              )}
 
                            {/* Wishlist Button */}
@@ -580,9 +578,10 @@ export default function GameDetailsPage() {
                    {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
                  </Button>
                </Box>
-             )}
-            </Stack>
-          </Flex>
+                           )}
+              </Stack>
+            </Grid.Col>
+          </Grid>
         </Paper>
 
         {/* Description Card */}
@@ -605,20 +604,20 @@ export default function GameDetailsPage() {
 
 
         {/* Files Section */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
-          <Flex justify="space-between" align="center" mb="md">
+        <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
+          <Flex justify="space-between" align="center" mb="sm">
             <Title order={3}>Files</Title>
             <Button
               variant="light"
-              size="md"
+              size="sm"
               style={{ 
                 backgroundColor: brandColors.accent, 
                 borderColor: brandColors.lightBrown,
                 color: 'white',
                 fontWeight: 600,
-                padding: '12px 24px'
+                padding: '8px 16px'
               }}
-              leftSection={<IconPlus size={18} />}
+              leftSection={<IconPlus size={16} />}
               onClick={() => setAddFileModalOpen(true)}
             >
               Add File
@@ -691,20 +690,20 @@ export default function GameDetailsPage() {
         </Paper>
 
         {/* Sessions Section */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
-          <Flex justify="space-between" align="center" mb="md">
+        <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
+          <Flex justify="space-between" align="center" mb="sm">
             <Title order={3}>Sessions</Title>
             <Button
               variant="light"
-              size="md"
+              size="sm"
               style={{ 
                 backgroundColor: brandColors.accent, 
                 borderColor: brandColors.lightBrown,
                 color: 'white',
                 fontWeight: 600,
-                padding: '12px 24px'
+                padding: '8px 16px'
               }}
-              leftSection={<IconPlus size={18} />}
+              leftSection={<IconPlus size={16} />}
               onClick={() => setAddSessionModalOpen(true)}
             >
               Add session
@@ -724,36 +723,44 @@ export default function GameDetailsPage() {
               <Table.Tbody>
                 {game.sessions.map((session) => (
                   <Table.Tr key={session.id}>
-                    <Table.Td>
+                    <Table.Td style={{ textAlign: 'left' }}>
                       {new Date(session.date).toLocaleDateString()}
                     </Table.Td>
-                    <Table.Td>
+                    <Table.Td style={{ textAlign: 'left' }}>
                       {session.players && session.players.length > 0
                         ? session.players.map((p) => p.name).join(", ")
                         : "No players"}
                     </Table.Td>
-                    <Table.Td>
+                    <Table.Td style={{ textAlign: 'left' }}>
                       {session.notes || "No notes"}
                     </Table.Td>
                     <Table.Td>
                       <Group gap="xs">
                         <ActionIcon
-                          color="blue"
-                          variant="light"
+                          variant="filled"
                           size="sm"
+                          style={{
+                            backgroundColor: brandColors.accent,
+                            color: 'white',
+                            borderColor: brandColors.lightBrown
+                          }}
                           onClick={() => openEditSession(session)}
                           title="Edit session"
                         >
-                          <IconEdit size={14} />
+                          <IconEdit size={16} />
                         </ActionIcon>
                         <ActionIcon
-                          color="red"
-                          variant="light"
+                          variant="filled"
                           size="sm"
+                          style={{
+                            backgroundColor: '#B07770',
+                            color: 'white',
+                            borderColor: '#B07770'
+                          }}
                           onClick={() => handleDeleteSession(session.id)}
                           title="Delete session"
                         >
-                          <IconX size={14} />
+                          <IconX size={16} />
                         </ActionIcon>
                       </Group>
                     </Table.Td>
