@@ -20,8 +20,6 @@ import {
   ActionIcon,
   Badge,
   Table,
-  FileInput,
-  Alert,
 } from "@mantine/core";
 import {
   IconFileText,
@@ -30,15 +28,12 @@ import {
   IconEdit,
   IconPlus,
   IconX,
-  IconUpload,
-  IconPhoto,
-  IconInfoCircle,
   IconHeart,
   IconHeartPlus,
 } from "@tabler/icons-react";
 
 import { Game, Session, File as GameFile } from "../interfaces";
-import { BASE_URL, CLOUDINARY_URL, CLOUDINARY_UPLOAD_PRESET } from "../config";
+import { BASE_URL } from "../config";
 
 type GameDetails = Game & {
   sessions?: Session[];
@@ -84,9 +79,6 @@ export default function GameDetailsPage() {
   const [addFileModalOpen, setAddFileModalOpen] = useState(false);
   const [fileTitle, setFileTitle] = useState("");
   const [fileLink, setFileLink] = useState("");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
   const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
@@ -247,29 +239,7 @@ export default function GameDetailsPage() {
   };
 
   // File handlers
-  const handleFileUpload = (file: File | null) => {
-    if (!file) return;
-    setUploadedFile(file);
-    setUploadError("");
-    uploadFileToCloudinary(file);
-  };
 
-  const uploadFileToCloudinary = async (file: File) => {
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
-    try {
-      const response = await axios.post(CLOUDINARY_URL, formData);
-      setFileLink(response.data.secure_url);
-    } catch (error) {
-      setUploadError("Failed to upload file");
-      console.error("Upload error:", error);
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   const handleAddFile = async () => {
     if (!gameId || !fileTitle.trim() || !fileLink) return;
@@ -301,14 +271,13 @@ export default function GameDetailsPage() {
   const resetFileForm = () => {
     setFileTitle("");
     setFileLink("");
-    setUploadedFile(null);
     setAddFileModalOpen(false);
   };
 
   // Helper functions
   const getFileIcon = (filename: string) => {
     const ext = filename.split('.').pop()?.toLowerCase();
-    return ext === 'pdf' ? <IconFileText size={20} /> : <IconPhoto size={20} />;
+    return ext === 'pdf' ? <IconFileText size={20} /> : <IconExternalLink size={20} />;
   };
 
   const getFileTypeLabel = (filename: string) => {
@@ -920,55 +889,11 @@ export default function GameDetailsPage() {
         title="Add a new file"
         size="md"
         styles={{
-          title: { color: 'green', fontWeight: 600 },
-          header: { borderBottom: '2px solid green' }
+          title: { color: brandColors.accent, fontWeight: 600 },
+          header: { borderBottom: `2px solid ${brandColors.accent}` }
         }}
       >
         <Stack gap="md">
-          {/* File Upload Section */}
-          <Paper shadow="sm" p="md" radius="md" bg="gray.0">
-            <Text fw={500} mb="md">Upload File</Text>
-            
-            <FileInput
-              label="Choose File"
-              placeholder="Select a file from your computer"
-              accept="*/*"
-              onChange={handleFileUpload}
-              leftSection={<IconUpload size={16} />}
-              size="md"
-              disabled={isUploading}
-            />
-
-            {isUploading && (
-              <Group align="center" gap="xs" mt="sm">
-                <Loader size="sm" />
-                <Text size="sm" c="dimmed">
-                  Uploading file to Cloudinary...
-                </Text>
-              </Group>
-            )}
-
-            {uploadError && (
-              <Alert color="red" icon={<IconInfoCircle size={16} />} mt="sm">
-                {uploadError}
-              </Alert>
-            )}
-
-            {uploadedFile && (
-              <Alert color="green" icon={<IconPhoto size={16} />} mt="sm">
-                <Stack gap="xs">
-                  <Text size="sm">✓ File uploaded successfully!</Text>
-                  <Text size="xs" c="dimmed">
-                    File: {uploadedFile.name} ({getFileTypeLabel(uploadedFile.name)})
-                  </Text>
-                  <Text size="xs" c="dimmed">
-                    Size: {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
-                  </Text>
-                </Stack>
-              </Alert>
-            )}
-          </Paper>
-
           {/* File Title Input */}
           <TextInput
             label="File Title"
@@ -977,21 +902,22 @@ export default function GameDetailsPage() {
             onChange={(e) => setFileTitle(e.currentTarget.value)}
             required
             styles={{
-              input: { borderColor: 'green' }
+              input: { borderColor: brandColors.accent }
             }}
           />
 
-          {/* File Link Display (Auto-filled after upload) */}
-          {fileLink && (
-            <TextInput
-              label="File Link (Auto-generated)"
-              value={fileLink}
-              readOnly
-              styles={{
-                input: { borderColor: 'green', backgroundColor: '#f8f9fa' }
-              }}
-            />
-          )}
+          {/* File Link Input */}
+          <TextInput
+            label="File Link"
+            placeholder="Enter the URL to your file (e.g., Google Drive, Dropbox, etc.)"
+            value={fileLink}
+            onChange={(e) => setFileLink(e.currentTarget.value)}
+            required
+            leftSection={<IconExternalLink size={16} />}
+            styles={{
+              input: { borderColor: brandColors.accent }
+            }}
+          />
 
           {/* Action Buttons */}
           <Group justify="flex-end" mt="md">
@@ -1000,9 +926,13 @@ export default function GameDetailsPage() {
             </Button>
             <Button
               variant="light"
-              color="green"
+              style={{
+                backgroundColor: brandColors.accent,
+                color: 'white',
+                borderColor: brandColors.accent
+              }}
               onClick={handleAddFile}
-              disabled={!fileTitle.trim() || !fileLink}
+              disabled={!fileTitle.trim() || !fileLink.trim()}
             >
               Add File
             </Button>

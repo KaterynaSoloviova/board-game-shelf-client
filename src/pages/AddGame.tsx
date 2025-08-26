@@ -111,7 +111,7 @@ export const AddGame: React.FC = () => {
       formData.append("file", file);
       formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-      const res = await fetch(`${CLOUDINARY_URL}/image/upload`, {
+      const res = await fetch(`${CLOUDINARY_URL}`, {
         method: "POST",
         body: formData,
       });
@@ -684,7 +684,7 @@ export const AddGame: React.FC = () => {
               <Button
                 variant="light"
                 color="gray"
-                onClick={() => navigate("/mygames")}
+                onClick={() => navigate("/games")}
                 size="md"
               >
                 Cancel
