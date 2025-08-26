@@ -8,7 +8,6 @@ import {
   Stack,
   Center,
   Loader,
-  Divider,
   Flex,
   Box,
   Button,
@@ -20,6 +19,8 @@ import {
   ActionIcon,
   Badge,
   Table,
+  Rating,
+  Grid,
 } from "@mantine/core";
 import {
   IconFileText,
@@ -40,15 +41,7 @@ type GameDetails = Game & {
   files?: File[];
 };
 
-const InfoItem: React.FC<{ label: string; value: string | number }> = ({
-  label,
-  value,
-}) => (
-  <Box style={{ minWidth: 120, marginRight: 24 }}>
-    <Text fw={500}>{label}:</Text>
-    <Text>{value}</Text>
-  </Box>
-);
+
 
 export default function GameDetailsPage() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -372,71 +365,209 @@ export default function GameDetailsPage() {
 
   return (
     <Box bg={brandColors.beige} mih="100vh">
-      <Container size="xl" py="xl">
-        <Stack>
+      <Container size="lg" py="lg">
+        <Stack gap="lg">
         {/* Top Info Card */}
         <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
-          <Flex gap="xl" align="flex-start" wrap="wrap">
-            {/* Game Cover */}
-            {game.coverImage && (
-              <Box style={{ minWidth: 200, maxWidth: 200 }}>
+          <Flex gap="xl" align="flex-start">
+            {/* Left Section: Game Cover and Status */}
+            <Box style={{ minWidth: 280, maxWidth: 280 }}>
+              {game.coverImage && (
                 <img
                   src={game.coverImage}
                   alt={game.title}
-                  style={{ width: "100%", borderRadius: 8 }}
+                  style={{ 
+                    width: "100%", 
+                    borderRadius: 12,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
+                  }}
                 />
+              )}
+              
+              {/* Status */}
+              <Box style={{ marginTop: '1rem' }}>
+                <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Status
+                </Text>
+                <Text 
+                  size="md" 
+                  c={game.isOwned ? brandColors.mutedGreen : brandColors.darkBrown}
+                  fw={600}
+                  style={{ 
+                    padding: '4px 12px', 
+                    backgroundColor: game.isOwned ? `${brandColors.mutedGreen}20` : `${brandColors.darkBrown}20`,
+                    borderRadius: '20px',
+                    display: 'inline-block'
+                  }}
+                >
+                  {game.isOwned ? "On the shelf" : "Not Owned"}
+                </Text>
               </Box>
-            )}
+            </Box>
 
-            {/* Info */}
-            <Stack style={{ flex: 1 }}>
+            {/* Right Section: Game Info */}
+            <Stack style={{ flex: 1 }} gap="md">
+              {/* Header: Rating, Title, Edit Button */}
               <Flex justify="space-between" align="flex-start">
-                <Title order={2}>{game.title}</Title>
+                <Flex align="center" gap="lg">
+                  {/* Rating Badge */}
+                  <Box
+                    style={{
+                      backgroundColor: brandColors.beige,
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      border: `2px solid ${brandColors.lightBrown}`,
+                      minWidth: '70px',
+                      textAlign: 'center',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <Text fw={700} size="xl" c={brandColors.darkBrown}>
+                      {game.rating.toFixed(1)}
+                    </Text>
+                  </Box>
+                  
+                  {/* Game Title */}
+                  <Title order={1} size="2.5rem" c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {game.title}
+                  </Title>
+                </Flex>
+                
+                {/* Edit Button */}
                 <Button
                   variant="light"
+                  size="md"
                   style={{ 
                     backgroundColor: brandColors.beige, 
                     borderColor: brandColors.lightBrown,
-                    color: brandColors.darkBrown
+                    color: brandColors.darkBrown,
+                    fontWeight: 600
                   }}
-                  leftSection={<IconEdit size={16} />}
+                  leftSection={<IconEdit size={18} />}
                   onClick={() => navigate(`/edit/${game.id}`)}
                 >
                   Edit Game
                 </Button>
               </Flex>
-              <Divider />
-              <Flex wrap="wrap" gap="md">
-                <InfoItem label="Rating" value={game.rating.toFixed(1)} />
-                <InfoItem label="My Rating" value={game.myRating ?? "N/A"} />
-                <InfoItem label="Publisher" value={game.publisher} />
-                <InfoItem label="Genre" value={game.genre} />
-                <InfoItem
-                  label="Players"
-                  value={`${game.minPlayers}–${game.maxPlayers}`}
-                />
-                <InfoItem label="Play Time" value={`${game.playTime} min`} />
-                <InfoItem label="Age" value={game.age} />
-                <InfoItem label="Status" value={game.isOwned ? "On the shelf" : "Not Owned"} />
-              </Flex>
+
+              {/* Game Stats Grid */}
+              <Box style={{ marginTop: '1rem' }}>
+                <Grid gutter="xl">
+                  <Grid.Col span={4}>
+                    <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
+                      <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Players
+                      </Text>
+                      <Text size="lg" fw={700} c={brandColors.darkBrown}>
+                        {game.minPlayers}–{game.maxPlayers}
+                      </Text>
+                    </Box>
+                  </Grid.Col>
+                  
+                  <Grid.Col span={4}>
+                    <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
+                      <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Play Time
+                      </Text>
+                      <Text size="lg" fw={700} c={brandColors.darkBrown}>
+                        {game.playTime} min
+                      </Text>
+                    </Box>
+                  </Grid.Col>
+                  
+                  <Grid.Col span={4}>
+                    <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
+                      <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Age
+                      </Text>
+                      <Text size="lg" fw={700} c={brandColors.darkBrown}>
+                        {game.age}
+                      </Text>
+                    </Box>
+                  </Grid.Col>
+                </Grid>
+              </Box>
+
+              {/* Additional Info - Label and value on same line, left aligned */}
+              <Box>
+                <Text fw={600} size="md" c={brandColors.darkBrown} style={{ textAlign: 'left' }}>
+                  Genre: {game.genre}
+                </Text>
+              </Box>
               
-              {/* Wishlist Button - Only show for games not owned */}
-              {!game.isOwned && (
-                <Box mt="md">
-                  <Button
-                    variant="light"
-                    onClick={handleWishlistToggle}
-                    style={{ 
-                      backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige, 
-                      borderColor: brandColors.lightBrown,
-                      color: isInWishlist ? 'white' : brandColors.darkBrown
-                    }}
-                    leftSection={isInWishlist ? <IconHeart size={16} /> : <IconHeartPlus size={16} />}
-                  >
-                    {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-                  </Button>
-                </Box>
-              )}
+              <Box>
+                <Text fw={600} size="md" c={brandColors.darkBrown} style={{ textAlign: 'left' }}>
+                  Publisher: {game.publisher}
+                </Text>
+              </Box>
+
+                           {/* My Rating */}
+             <Box>
+               <Flex align="center" gap="xs">
+                 <Text fw={600} size="md" c={brandColors.darkBrown} style={{ textAlign: 'left' }}>
+                   My Rating:
+                 </Text>
+                 {typeof game.myRating === "number" && game.myRating > 0 ? (
+                   <Rating
+                     value={game.myRating}
+                     readOnly
+                     size="sm"
+                     color={brandColors.accent}
+                   />
+                 ) : (
+                   <Text size="md" c="dimmed" fw={500}>No rating yet</Text>
+                 )}
+               </Flex>
+             </Box>
+
+                           {/* Tags */}
+             {game.tags && game.tags.length > 0 && (
+               <Box>
+                 <Flex align="center" gap="xs">
+                   <Text fw={600} size="md" c={brandColors.darkBrown} style={{ textAlign: 'left' }}>
+                     Tags:
+                   </Text>
+                   <Flex gap="sm" wrap="wrap">
+                     {game.tags.map((tag) => (
+                       <Box
+                         key={tag.id}
+                         style={{
+                           backgroundColor: brandColors.accent,
+                           padding: "6px 12px",
+                           borderRadius: "20px",
+                           border: `1px solid ${brandColors.accent}`,
+                         }}
+                       >
+                         <Text size="sm" fw={600} c="white">
+                           {tag.title}
+                         </Text>
+                       </Box>
+                     ))}
+                   </Flex>
+                 </Flex>
+               </Box>
+             )}
+
+                           {/* Wishlist Button */}
+             {!game.isOwned && (
+               <Box mt="auto" style={{ alignSelf: 'flex-end' }}>
+                 <Button
+                   variant="light"
+                   size="md"
+                   onClick={handleWishlistToggle}
+                   style={{
+                     backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige,
+                     borderColor: brandColors.lightBrown,
+                     color: isInWishlist ? 'white' : brandColors.darkBrown,
+                     fontWeight: 600,
+                     padding: '12px 24px'
+                   }}
+                   leftSection={isInWishlist ? <IconHeart size={18} /> : <IconHeartPlus size={18} />}
+                 >
+                   {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                 </Button>
+               </Box>
+             )}
             </Stack>
           </Flex>
         </Paper>
@@ -459,31 +590,7 @@ export default function GameDetailsPage() {
           </Stack>
         </Paper>
 
-        {/* Tags Card */}
-        {game.tags && game.tags.length > 0 && (
-          <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
-            <Stack>
-              <Text fw={500}>Tags:</Text>
-              <Flex gap="xs" wrap="wrap">
-                {game.tags.map((tag) => (
-                  <Box
-                    key={tag.id}
-                    style={{
-                      backgroundColor: brandColors.beige,
-                      padding: "8px 12px",
-                      borderRadius: "16px",
-                      border: `1px solid ${brandColors.lightBrown}`,
-                    }}
-                  >
-                    <Text size="sm" fw={500} c={brandColors.darkBrown}>
-                      {tag.title}
-                    </Text>
-                  </Box>
-                ))}
-              </Flex>
-            </Stack>
-          </Paper>
-        )}
+
 
         {/* Files Section */}
         <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
