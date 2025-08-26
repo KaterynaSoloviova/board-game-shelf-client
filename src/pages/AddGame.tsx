@@ -59,6 +59,14 @@ export const AddGame: React.FC = () => {
   const navigate = useNavigate();
   const { tagOptions, addNewTag } = useTags();
 
+  const brandColors = {
+    beige: "#e0d9c4",
+    lightBrown: "#c5b79d",
+    mutedGreen: "#8c947d",
+    darkBrown: "#635841",
+    accent: "#a87e5b",
+  };
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [genre, setGenre] = useState("");
@@ -177,22 +185,25 @@ export const AddGame: React.FC = () => {
   };
 
   return (
-    <Container size="md" py="xl">
-      <Card shadow="lg" padding="xl" radius="md">
+    <Container size="lg" py="lg">
+      <Card shadow="sm" padding="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
         {/* Header */}
         <Group align="center" mb="xl">
           <ActionIcon
             size="xl"
-            variant="gradient"
-            gradient={{ from: "blue", to: "cyan" }}
+            variant="filled"
+            style={{
+              backgroundColor: brandColors.accent,
+              color: 'white'
+            }}
           >
             <IconDeviceGamepad2 size={24} />
           </ActionIcon>
           <div>
-            <Title order={2} c="dark">
+            <Title order={2} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
               Add New Game
             </Title>
-            <Text size="sm" c="dimmed">
+            <Text size="sm" c={brandColors.mutedGreen} style={{ fontFamily: 'Inter, sans-serif' }}>
               Create a new entry for your board game collection
             </Text>
           </div>
@@ -208,10 +219,10 @@ export const AddGame: React.FC = () => {
         >
           <Stack gap="lg">
             {/* Basic Information Section */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconInfoCircle size={18} />
-                <Text fw={500}>Basic Information</Text>
+                <IconInfoCircle size={18} color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Basic Information</Text>
               </Group>
 
               <Grid>
@@ -250,11 +261,11 @@ export const AddGame: React.FC = () => {
             </Paper>
 
             {/* Game Description */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
-              <Text fw={500} mb="md">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+              <Text fw={500} mb="md" c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
                 Game Description
               </Text>
-              <Card shadow="sm" padding="xs" radius="md" bg="white">
+              <Card shadow="sm" padding="xs" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
                 <Group mb="xs" gap="xs">
                   {/* Text Formatting */}
                   <Tooltip label="Bold">
@@ -384,10 +395,13 @@ export const AddGame: React.FC = () => {
                 </Group>
                 <Box
                   style={{
-                    border: "1px solid #e9ecef",
-                    borderRadius: 8,
-                    minHeight: 120,
+                    border: `2px solid ${brandColors.lightBrown}`,
+                    borderRadius: 16,
+                    minHeight: 300,
                     backgroundColor: "white",
+                    padding: "24px",
+                    width: "100%",
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}
                 >
                   <EditorContent editor={editor} />
@@ -396,10 +410,10 @@ export const AddGame: React.FC = () => {
             </Paper>
 
             {/* Game Details */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconUsers size={18} />
-                <Text fw={500}>Game Details</Text>
+                <IconUsers size={18} color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Game Details</Text>
               </Group>
 
               <Grid>
@@ -501,15 +515,30 @@ export const AddGame: React.FC = () => {
                         setIsOwned(event.currentTarget.checked)
                       }
                       size="md"
+                      styles={{
+                        track: {
+                          backgroundColor: isOwned ? brandColors.accent : brandColors.lightBrown,
+                          borderColor: brandColors.lightBrown
+                        },
+                        thumb: {
+                          backgroundColor: 'white',
+                          borderColor: brandColors.lightBrown
+                        },
+                        label: {
+                          color: brandColors.darkBrown,
+                          fontFamily: 'Inter, sans-serif',
+                          fontWeight: 600
+                        }
+                      }}
                       thumbIcon={
                         isOwned ? (
                           <IconHeartFilled size={12} color="red" />
                         ) : (
-                          <IconHeart size={12} />
+                          <IconHeart size={12} color="red" />
                         )
                       }
                     />
-                    <Text size="sm" c="dimmed">
+                    <Text size="sm" c={brandColors.mutedGreen} style={{ fontFamily: 'Inter, sans-serif' }}>
                       Toggle if this game is part of your collection
                     </Text>
                   </Group>
@@ -518,10 +547,10 @@ export const AddGame: React.FC = () => {
             </Paper>
 
             {/* Cover Image */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconPhoto size={18} />
-                <Text fw={500}>Cover Image</Text>
+                <IconPhoto size={18} color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Cover Image</Text>
               </Group>
 
               <Stack gap="md">
@@ -583,8 +612,13 @@ export const AddGame: React.FC = () => {
                         )}
                         <Button
                           variant="light"
-                          color="red"
                           size="xs"
+                          style={{
+                            backgroundColor: '#B07770',
+                            borderColor: '#B07770',
+                            color: 'white',
+                            fontWeight: 600
+                          }}
                           leftSection={<IconTrash size={14} />}
                           onClick={() => {
                             setCoverImage("");
@@ -602,10 +636,10 @@ export const AddGame: React.FC = () => {
             </Paper>
 
             {/* Tags */}
-            <Paper shadow="sm" p="md" radius="md" bg="gray.0">
+            <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
               <Group align="center" mb="md">
-                <IconTag size={18} />
-                <Text fw={500}>Tags & Categories</Text>
+                <IconTag size="18" color={brandColors.accent} />
+                <Text fw={500} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Tags & Categories</Text>
               </Group>
 
               <MultiSelect
@@ -643,6 +677,12 @@ export const AddGame: React.FC = () => {
                 />
                 <Button
                   size="sm"
+                  style={{
+                    backgroundColor: brandColors.accent,
+                    borderColor: brandColors.lightBrown,
+                    color: 'white',
+                    fontWeight: 600
+                  }}
                   onClick={() => {
                     const normalized = newTag.trim();
                     if (!normalized) return;
@@ -663,16 +703,27 @@ export const AddGame: React.FC = () => {
                     <Badge
                       key={index}
                       variant="light"
-                      size="sm"
+                      size="md"
+                      style={{
+                        backgroundColor: '#99B5A3',
+                        color: 'white',
+                        border: `1px solid #99B5A3`,
+                        fontSize: '14px',
+                        padding: '8px 14px',
+                        lineHeight: '1.2',
+                        borderRadius: 20,
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}
                       rightSection={
                         <ActionIcon
-                          size="xs"
-                          color="gray"
+                          size="sm"
+                          color="white"
                           radius="xl"
                           variant="transparent"
                           onClick={() => removeTag(tag)}
                         >
-                          <IconX size={10} />
+                          <IconX size={12} />
                         </ActionIcon>
                       }
                       pr={3}
@@ -690,18 +741,29 @@ export const AddGame: React.FC = () => {
             <Group justify="flex-end" mt="xl">
               <Button
                 variant="light"
-                color="gray"
+                style={{
+                  backgroundColor: '#B07770',
+                  borderColor: '#B07770',
+                  color: 'white',
+                  fontWeight: 600,
+                  padding: '12px 24px'
+                }}
                 onClick={() => navigate("/games")}
                 size="md"
               >
                 Cancel
               </Button>
               <Button
-                gradient={{ from: "blue", to: "cyan" }}
-                variant="gradient"
-                size="md"
+                style={{
+                  backgroundColor: brandColors.accent,
+                  borderColor: brandColors.lightBrown,
+                  color: 'white',
+                  fontWeight: 600,
+                  padding: '12px 24px'
+                }}
                 onClick={handleSubmit}
                 leftSection={<IconDeviceGamepad2 size={18} />}
+                size="md"
               >
                 Add Game to Collection
               </Button>

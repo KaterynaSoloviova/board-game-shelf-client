@@ -608,6 +608,21 @@ export const EditGame: React.FC = () => {
                         setIsOwned(event.currentTarget.checked)
                       }
                       size="md"
+                      styles={{
+                        track: {
+                          backgroundColor: isOwned ? brandColors.accent : brandColors.lightBrown,
+                          borderColor: brandColors.lightBrown
+                        },
+                        thumb: {
+                          backgroundColor: 'white',
+                          borderColor: brandColors.lightBrown
+                        },
+                        label: {
+                          color: brandColors.darkBrown,
+                          fontFamily: 'Inter, sans-serif',
+                          fontWeight: 600
+                        }
+                      }}
                       thumbIcon={
                         isOwned ? (
                           <IconHeartFilled size={12} color="red" />
@@ -616,7 +631,7 @@ export const EditGame: React.FC = () => {
                         )
                       }
                     />
-                    <Text size="sm" c="dimmed">
+                    <Text size="sm" c={brandColors.mutedGreen} style={{ fontFamily: 'Inter, sans-serif' }}>
                       Toggle if this game is part of your collection
                     </Text>
                   </Group>
@@ -782,21 +797,27 @@ export const EditGame: React.FC = () => {
                     <Badge
                       key={index}
                       variant="light"
-                      size="sm"
+                      size="md"
                       style={{
                         backgroundColor: '#99B5A3',
                         color: 'white',
-                        border: `1px solid #99B5A3`
+                        border: `1px solid #99B5A3`,
+                        fontSize: '14px',
+                        padding: '8px 14px',
+                        lineHeight: '1.2',
+                        borderRadius: 20,
+                        display: 'inline-flex',
+                        alignItems: 'center'
                       }}
                       rightSection={
                         <ActionIcon
-                          size="xs"
+                          size="sm"
                           color="white"
                           radius="xl"
                           variant="transparent"
                           onClick={() => removeTag(tag)}
                         >
-                          <IconX size={10} />
+                          <IconX size={12} />
                         </ActionIcon>
                       }
                       pr={3}
