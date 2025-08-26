@@ -371,7 +371,7 @@ export default function GameDetailsPage() {
       <Container size="lg" py="lg">
         <Stack gap="lg">
         {/* Top Info Card */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
           <Flex gap="xl" align="flex-start">
             {/* Left Section: Game Cover and Status */}
             <Box style={{ minWidth: 280, maxWidth: 280 }}>
@@ -586,7 +586,7 @@ export default function GameDetailsPage() {
         </Paper>
 
         {/* Description Card */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
           <Stack>
             {game.description ? (
               <div 
@@ -605,7 +605,7 @@ export default function GameDetailsPage() {
 
 
         {/* Files Section */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
           <Flex justify="space-between" align="center" mb="md">
             <Title order={3}>Files</Title>
             <Button
@@ -691,7 +691,7 @@ export default function GameDetailsPage() {
         </Paper>
 
         {/* Sessions Section */}
-        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: 'white' }}>
+        <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
           <Flex justify="space-between" align="center" mb="md">
             <Title order={3}>Sessions</Title>
             <Button
@@ -778,7 +778,7 @@ export default function GameDetailsPage() {
         styles={{
           title: { color: brandColors.darkBrown, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
           header: { borderBottom: `2px solid ${brandColors.lightBrown}`, backgroundColor: brandColors.beige },
-          body: { backgroundColor: 'white' }
+          body: { backgroundColor: '#f0f0eb' }
         }}
       >
         <Stack gap="md">
@@ -913,7 +913,7 @@ export default function GameDetailsPage() {
         </Stack>
       </Modal>
 
-      {/* Edit Session Modal */}
+              {/* Edit Session Modal */}
       <Modal
         opened={editSessionModalOpen}
         onClose={resetSessionForm}
@@ -922,7 +922,7 @@ export default function GameDetailsPage() {
         styles={{
           title: { color: brandColors.darkBrown, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
           header: { borderBottom: `2px solid ${brandColors.lightBrown}`, backgroundColor: brandColors.beige },
-          body: { backgroundColor: 'white' }
+          body: { backgroundColor: '#f0f0eb' }
         }}
       >
         <Stack gap="md">

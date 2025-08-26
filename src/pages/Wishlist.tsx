@@ -9,9 +9,10 @@ import {
   Loader,
   Center,
   Alert,
-  Paper
+  Paper,
+  Flex
 } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { BASE_URL } from '../config';
 import { Game } from '../interfaces';
@@ -86,48 +87,48 @@ function Wishlist() {
   }
 
   return (
-    <Container size="xl" py="xl">
-      <Stack gap="xl">
-        {/* Header Section */}
-        <Box
-          style={{
-            background: `linear-gradient(135deg, ${brandColors.beige} 0%, ${brandColors.lightBrown} 100%)`,
-            padding: '3rem 0',
-            borderRadius: '16px',
-            textAlign: 'center'
-          }}
-        >
-          <Title
-            order={1}
-            size="2.5rem"
-            c={brandColors.darkBrown}
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 700,
-              marginBottom: '1rem'
-            }}
-          >
-            My Wishlist 🎯
-          </Title>
-          <Text
-            size="lg"
-            c={brandColors.mutedGreen}
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              maxWidth: '600px',
-              margin: '0 auto'
-            }}
-          >
-            Games I'm excited to add to my collection
-          </Text>
-        </Box>
+    <Box bg={brandColors.beige} mih="100vh">
+      <Paper shadow="sm" py="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: brandColors.beige }}>
+        <Container size="xl">
+          <Flex justify="space-between" align="center">
+            <Stack gap="xs">
+              <Flex align="center" gap="sm">
+                <IconHeart 
+                  size={32} 
+                  color="#9A6A63"
+                  style={{ filter: 'drop-shadow(0 2px 4px rgba(99, 88, 65, 0.2))' }}
+                />
+                <Title order={1} c="#9A6A63">My Wishlist</Title>
+              </Flex>
+              <Text
+                size="md"
+                c={brandColors.darkBrown}
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  marginLeft: '40px',
+                  fontWeight: 500
+                }}
+              >
+                Games I'm excited to add to my collection
+              </Text>
+            </Stack>
+            <Text c={brandColors.mutedGreen} size="sm">
+              {wishlistGames.length} game{wishlistGames.length !== 1 ? "s" : ""}{" "}
+              in wishlist
+            </Text>
+          </Flex>
+        </Container>
+      </Paper>
+
+      <Container size="xl" py="xl">
+        <Stack gap="xl">
 
         {/* Games Grid */}
         {wishlistGames.length === 0 ? (
           <Paper
             p="xl"
             style={{
-              backgroundColor: 'white',
+              backgroundColor: '#f0f0eb',
               border: `1px solid ${brandColors.lightBrown}`,
               borderRadius: '12px',
               textAlign: 'center'
@@ -152,6 +153,7 @@ function Wishlist() {
         )}
       </Stack>
     </Container>
+  </Box>
   );
 }
 
