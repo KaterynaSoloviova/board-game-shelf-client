@@ -51,8 +51,6 @@ const MyGames: React.FC = () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}/api/games/`);
-      console.log("Fetched games:", response.data);
-
       const gamesWithSessions = await Promise.all(
         response.data.map(async (game: Game) => {
           try {
@@ -70,7 +68,6 @@ const MyGames: React.FC = () => {
           }
         })
       );
-      console.log("Games with sessions:", gamesWithSessions);
       setGames(gamesWithSessions);
     } catch (error) {
       console.error("Failed to fetch games:", error);
