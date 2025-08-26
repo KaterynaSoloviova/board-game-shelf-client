@@ -145,6 +145,12 @@ const AboutProject: React.FC = () => {
               and get inspired for their own gaming adventures.
             </Text>
 
+            <Text size="lg" c={brandColors.mutedGreen} style={{ lineHeight: 1.8, fontFamily: 'Inter, sans-serif' }}>
+              <strong>Technical Goals:</strong> As part of my Ironhack bootcamp journey, this project focuses on mastering 
+              database types, Prisma ORM, SQL, PostgreSQL, and TypeScript. It's designed to demonstrate my understanding 
+              of modern database design, type safety, and full-stack development practices.
+            </Text>
+
             <Divider color={brandColors.lightBrown} />
 
             <Title order={3} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>
@@ -344,7 +350,7 @@ const AboutProject: React.FC = () => {
                          }} 
                          size="lg"
                        >
-                         MongoDB
+                         PostgreSQL
                        </Badge>
                        <Badge 
                          style={{ 
@@ -354,7 +360,7 @@ const AboutProject: React.FC = () => {
                          }} 
                          size="lg"
                        >
-                         Mongoose
+                         Prisma ORM
                        </Badge>
                      </Group>
                      <Group gap="xs">
@@ -366,7 +372,7 @@ const AboutProject: React.FC = () => {
                          }} 
                          size="lg"
                        >
-                         JWT
+                         SQL
                        </Badge>
                        <Badge 
                          style={{ 
@@ -376,7 +382,7 @@ const AboutProject: React.FC = () => {
                          }} 
                          size="lg"
                        >
-                         bcrypt
+                         Database Types
                        </Badge>
                      </Group>
                      <Group gap="xs">
@@ -398,7 +404,7 @@ const AboutProject: React.FC = () => {
                          }} 
                          size="lg"
                        >
-                         Cloudinary
+                         TypeScript
                        </Badge>
                      </Group>
                    </Stack>
