@@ -153,7 +153,7 @@ export const AddGame: React.FC = () => {
         tags: tags.map((t) => ({ title: t })),
         createdAt: new Date(),
       });
-      navigate("/mygames");
+      navigate("/games");
     } catch (error) {
       console.error(error);
       alert("Failed to add game");
