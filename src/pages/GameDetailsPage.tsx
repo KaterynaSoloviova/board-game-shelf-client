@@ -31,6 +31,9 @@ import {
   IconX,
   IconHeart,
   IconHeartPlus,
+  IconUsers,
+  IconClock,
+  IconStar,
 } from "@tabler/icons-react";
 
 import { Game, Session, File as GameFile } from "../interfaces";
@@ -454,38 +457,47 @@ export default function GameDetailsPage() {
               {/* Game Stats Grid */}
               <Box style={{ marginTop: '1rem' }}>
                 <Grid gutter="xl">
-                  <Grid.Col span={4}>
-                    <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
-                      <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Players
-                      </Text>
-                      <Text size="lg" fw={700} c={brandColors.darkBrown}>
-                        {game.minPlayers}–{game.maxPlayers}
-                      </Text>
-                    </Box>
-                  </Grid.Col>
-                  
-                  <Grid.Col span={4}>
-                    <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
-                      <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Play Time
-                      </Text>
-                      <Text size="lg" fw={700} c={brandColors.darkBrown}>
-                        {game.playTime} min
-                      </Text>
-                    </Box>
-                  </Grid.Col>
-                  
-                  <Grid.Col span={4}>
-                    <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
-                      <Text fw={600} size="sm" c={brandColors.darkBrown} mb="xs" style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Age
-                      </Text>
-                      <Text size="lg" fw={700} c={brandColors.darkBrown}>
-                        {game.age}
-                      </Text>
-                    </Box>
-                  </Grid.Col>
+                                   <Grid.Col span={4}>
+                   <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
+                     <Flex align="center" justify="center" gap="xs" mb="xs">
+                       <IconUsers size={18} color="#B07770" />
+                       <Text fw={600} size="sm" c={brandColors.darkBrown} style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                         Players
+                       </Text>
+                     </Flex>
+                     <Text size="lg" fw={700} c={brandColors.darkBrown} style={{ textAlign: 'center' }}>
+                       {game.minPlayers}–{game.maxPlayers}
+                     </Text>
+                   </Box>
+                 </Grid.Col>
+
+                 <Grid.Col span={4}>
+                   <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
+                     <Flex align="center" justify="center" gap="xs" mb="xs">
+                       <IconClock size={18} color="#B07770" />
+                       <Text fw={600} size="sm" c={brandColors.darkBrown} style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                         Play Time
+                       </Text>
+                     </Flex>
+                     <Text size="lg" fw={700} c={brandColors.darkBrown} style={{ textAlign: 'center' }}>
+                       {game.playTime} min
+                     </Text>
+                   </Box>
+                 </Grid.Col>
+
+                 <Grid.Col span={4}>
+                   <Box style={{ padding: '16px', backgroundColor: brandColors.beige, borderRadius: '8px', border: `1px solid ${brandColors.lightBrown}` }}>
+                     <Flex align="center" justify="center" gap="xs" mb="xs">
+                       <IconStar size={18} color="#B07770" />
+                       <Text fw={600} size="sm" c={brandColors.darkBrown} style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                         Age
+                       </Text>
+                     </Flex>
+                     <Text size="lg" fw={700} c={brandColors.darkBrown} style={{ textAlign: 'center' }}>
+                       {game.age}
+                     </Text>
+                   </Box>
+                 </Grid.Col>
                 </Grid>
               </Box>
 

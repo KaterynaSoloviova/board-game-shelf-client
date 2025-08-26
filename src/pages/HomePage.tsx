@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
   const brandColors = {
     beige: "#e0d9c4",
     lightBrown: "#c5b79d",
-    mutedGreen: "#8c947d",
+    mutedGreen: "#6b8e23",
     darkBrown: "#635841",
     accent: "#a87e5b",
   };
@@ -56,8 +56,8 @@ const HomePage: React.FC = () => {
   };
 
   const handleGameClick = (gameId: string) => {
-    // Game click functionality can be added here if needed
-    console.log('Game clicked:', gameId);
+    // Navigate to game details page
+    window.location.href = `/game/${gameId}`;
   };
 
   return (
@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
       <Box 
         style={{ 
           background: `linear-gradient(135deg, ${brandColors.beige} 0%, ${brandColors.lightBrown} 100%)`,
-          padding: '4rem 0',
+          padding: '2rem 0',
           textAlign: 'center'
         }}
       >
@@ -114,7 +114,7 @@ const HomePage: React.FC = () => {
           radius="md" 
           mb="xl" 
           style={{ 
-            backgroundColor: 'white',
+            backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`,
             textAlign: 'center'
           }}
@@ -151,7 +151,7 @@ const HomePage: React.FC = () => {
           radius="md" 
           mb="xl" 
           style={{ 
-            backgroundColor: 'white',
+            backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`
           }}
         >
@@ -164,7 +164,7 @@ const HomePage: React.FC = () => {
               fontWeight: 600
             }}
           >
-            How to Use the Site
+            What you can do on the site
           </Title>
           <Grid gutter="lg">
             <Grid.Col span={{ base: 12, md: 4 }}>
@@ -225,22 +225,12 @@ const HomePage: React.FC = () => {
           radius="md" 
           mb="xl" 
           style={{ 
-            backgroundColor: 'white',
+            backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`,
             textAlign: 'center'
           }}
         >
           <Stack gap="lg" align="center">
-            <Title 
-              order={3} 
-              c={brandColors.darkBrown}
-              style={{ 
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: 600
-              }}
-            >
-              A Friendly Note
-            </Title>
             <Text 
               size="lg" 
               c={brandColors.mutedGreen}
@@ -272,7 +262,7 @@ const HomePage: React.FC = () => {
           p="xl" 
           radius="md" 
           style={{ 
-            backgroundColor: 'white',
+            backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`
           }}
         >
@@ -285,7 +275,7 @@ const HomePage: React.FC = () => {
               fontWeight: 600
             }}
           >
-            🎯 Hottest Games
+            🔥 Hottest Games
           </Title>
           
           {loading ? (

@@ -51,7 +51,7 @@ function Header() {
       withBorder 
       style={{ 
         borderColor: brandColors.lightBrown, 
-        backgroundColor: 'white',
+        backgroundColor: '#f0f0eb',
         position: 'sticky',
         top: 0,
         zIndex: 100
