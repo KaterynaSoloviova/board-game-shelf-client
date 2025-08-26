@@ -329,15 +329,24 @@ export default function GameDetailsPage() {
 
   const checkWishlistStatus = async (gameId: string) => {
     try {
-      // You might want to create an endpoint to check if a game is in wishlist
-      // For now, we'll assume it's not in wishlist initially
-      // You can implement this based on your backend structure
-      const response = await axios.get(`${BASE_URL}/api/games/${gameId}/wishlist-status`);
-      setIsInWishlist(response.data.isInWishlist || false);
+      // Option 1: Check if the game is in the user's wishlist by fetching all wishlist games
+      const response = await axios.get(`${BASE_URL}/api/games/wishlist`);
+      const wishlistGames = response.data;
+      const isInWishlist = wishlistGames.some((wishlistGame: Game) => wishlistGame.id === gameId);
+      setIsInWishlist(isInWishlist);
+      
+      // Option 2: Also store in localStorage as backup
+      localStorage.setItem(`wishlist_${gameId}`, isInWishlist.toString());
     } catch (error) {
-      console.error('Failed to check wishlist status:', error);
-      // Default to false if we can't determine the status
-      setIsInWishlist(false);
+      console.error('Failed to check wishlist status from API:', error);
+      
+      // Fallback to localStorage if API fails
+      const storedStatus = localStorage.getItem(`wishlist_${gameId}`);
+      if (storedStatus !== null) {
+        setIsInWishlist(storedStatus === 'true');
+      } else {
+        setIsInWishlist(false);
+      }
     }
   };
 
@@ -349,11 +358,13 @@ export default function GameDetailsPage() {
         // Remove from wishlist
         await axios.post(`${BASE_URL}/api/games/${gameId}/removeWishlist`);
         setIsInWishlist(false);
+        localStorage.setItem(`wishlist_${gameId}`, 'false');
         console.log('Removed from wishlist:', game.title);
       } else {
         // Add to wishlist
         await axios.post(`${BASE_URL}/api/games/${gameId}/addWishlist`);
         setIsInWishlist(true);
+        localStorage.setItem(`wishlist_${gameId}`, 'true');
         console.log('Added to wishlist:', game.title);
       }
     } catch (error) {

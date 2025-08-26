@@ -163,7 +163,7 @@ export const EditGame: React.FC = () => {
       formData.append("file", file);
       formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-      const res = await fetch(`${CLOUDINARY_URL}/image/upload`, {
+      const res = await fetch(`${CLOUDINARY_URL}`, {
         method: "POST",
         body: formData,
       });
