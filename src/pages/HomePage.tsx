@@ -13,6 +13,7 @@ import {
   Card,
   Image,
   Badge,
+  rem,
 } from '@mantine/core';
 import { IconDice, IconUsers, IconClock, IconStar } from '@tabler/icons-react';
 import { Game } from '../interfaces';
@@ -42,7 +43,7 @@ const HomePage: React.FC = () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}/api/games/top`);
-      
+
       // Take top 6 games from the backend response
       const topGames = response.data.slice(0, 6);
       setHottestGames(topGames);
@@ -63,8 +64,8 @@ const HomePage: React.FC = () => {
   return (
     <Box bg={brandColors.beige} mih="100vh">
       {/* Hero Section with BoardGamesShelf Image */}
-      <Box 
-        style={{ 
+      <Box
+        style={{
           background: `linear-gradient(135deg, ${brandColors.beige} 0%, ${brandColors.lightBrown} 100%)`,
           padding: '1rem 0',
           textAlign: 'center'
@@ -74,17 +75,17 @@ const HomePage: React.FC = () => {
           <Image
             src={BoardGamesShelfImage}
             alt="Board Games Shelf"
-            style={{ 
-              maxWidth: '400px', 
+            style={{
+              maxWidth: '400px',
               margin: '0 auto 2rem',
               filter: 'drop-shadow(0 10px 20px rgba(99, 88, 65, 0.2))'
             }}
           />
-          <Title 
-            order={1} 
-            size="3rem" 
+          <Title
+            order={1}
+            size="3rem"
             c={brandColors.darkBrown}
-            style={{ 
+            style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
               marginBottom: '1rem'
@@ -92,10 +93,10 @@ const HomePage: React.FC = () => {
           >
             Board Games Shelf
           </Title>
-          <Text 
-            size="lg" 
+          <Text
+            size="lg"
             c={brandColors.mutedGreen}
-            style={{ 
+            style={{
               fontFamily: 'Inter, sans-serif',
               maxWidth: '600px',
               margin: '0 auto'
@@ -108,32 +109,32 @@ const HomePage: React.FC = () => {
 
       <Container size="xl" py="lg">
         {/* Welcome Message */}
-        <Paper 
-          shadow="sm" 
-          p="xl" 
-          radius="md" 
-          mb="lg" 
-          style={{ 
+        <Paper
+          shadow="sm"
+          p="xl"
+          radius="md"
+          mb="lg"
+          style={{
             backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`,
             textAlign: 'center'
           }}
         >
           <Stack gap="lg" align="center">
-            <Title 
-              order={2} 
+            <Title
+              order={2}
               c={brandColors.darkBrown}
-              style={{ 
+              style={{
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 600
               }}
             >
               Welcome! 🎲
             </Title>
-            <Text 
-              size="lg" 
+            <Text
+              size="lg"
               c={brandColors.mutedGreen}
-              style={{ 
+              style={{
                 fontFamily: 'Inter, sans-serif',
                 lineHeight: 1.6,
                 maxWidth: '800px'
@@ -145,21 +146,21 @@ const HomePage: React.FC = () => {
         </Paper>
 
         {/* How to Use Section */}
-        <Paper 
-          shadow="sm" 
-          p="xl" 
-          radius="md" 
-          mb="xl" 
-          style={{ 
+        <Paper
+          shadow="sm"
+          p="xl"
+          radius="md"
+          mb="xl"
+          style={{
             backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`
           }}
         >
-          <Title 
-            order={3} 
+          <Title
+            order={3}
             c={brandColors.darkBrown}
             mb="lg"
-            style={{ 
+            style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 600
             }}
@@ -169,13 +170,13 @@ const HomePage: React.FC = () => {
           <Grid gutter="lg">
             <Grid.Col span={{ base: 12, md: 4 }}>
               <Stack gap="sm" align="center" ta="center">
-                <IconDice 
-                  size={40} 
+                <IconDice
+                  size={40}
                   color={brandColors.accent}
                   style={{ marginBottom: '0.5rem' }}
                 />
-                <Text 
-                  size="md" 
+                <Text
+                  size="md"
                   c={brandColors.mutedGreen}
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
@@ -185,13 +186,13 @@ const HomePage: React.FC = () => {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
               <Stack gap="sm" align="center" ta="center">
-                <IconUsers 
-                  size={40} 
+                <IconUsers
+                  size={40}
                   color={brandColors.accent}
                   style={{ marginBottom: '0.5rem' }}
                 />
-                <Text 
-                  size="md" 
+                <Text
+                  size="md"
                   c={brandColors.mutedGreen}
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
@@ -201,13 +202,13 @@ const HomePage: React.FC = () => {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
               <Stack gap="sm" align="center" ta="center">
-                <IconStar 
-                  size={40} 
+                <IconStar
+                  size={40}
                   color={brandColors.accent}
                   style={{ marginBottom: '0.5rem' }}
                 />
-                <Text 
-                  size="md" 
+                <Text
+                  size="md"
                   c={brandColors.mutedGreen}
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
@@ -219,22 +220,22 @@ const HomePage: React.FC = () => {
         </Paper>
 
         {/* Friendly Note Section */}
-        <Paper 
-          shadow="sm" 
-          p="xl" 
-          radius="md" 
-          mb="xl" 
-          style={{ 
+        <Paper
+          shadow="sm"
+          p="xl"
+          radius="md"
+          mb="xl"
+          style={{
             backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`,
             textAlign: 'center'
           }}
         >
           <Stack gap="lg" align="center">
-            <Text 
-              size="lg" 
+            <Text
+              size="lg"
               c={brandColors.mutedGreen}
-              style={{ 
+              style={{
                 fontFamily: 'Inter, sans-serif',
                 lineHeight: 1.6,
                 maxWidth: '700px'
@@ -242,10 +243,10 @@ const HomePage: React.FC = () => {
             >
               This isn't just a list — it's our shelf. If you're coming over for a game night, check here first to see what's available, or suggest something new to add!
             </Text>
-            <Text 
-              size="xl" 
+            <Text
+              size="xl"
               c={brandColors.accent}
-              style={{ 
+              style={{
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 600,
                 fontStyle: 'italic'
@@ -257,27 +258,27 @@ const HomePage: React.FC = () => {
         </Paper>
 
         {/* Hottest Games Slider */}
-        <Paper 
-          shadow="sm" 
-          p="xl" 
-          radius="md" 
-          style={{ 
+        <Paper
+          shadow="sm"
+          p="xl"
+          radius="md"
+          style={{
             backgroundColor: '#f0f0eb',
             border: `1px solid ${brandColors.lightBrown}`
           }}
         >
-          <Title 
-            order={3} 
+          <Title
+            order={3}
             c={brandColors.darkBrown}
             mb="lg"
-            style={{ 
+            style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 600
             }}
           >
             🔥 Hottest Games
           </Title>
-          
+
           {loading ? (
             <Center py="xl">
               <Loader color={brandColors.darkBrown} />
@@ -295,9 +296,12 @@ const HomePage: React.FC = () => {
                     padding="lg"
                     radius="md"
                     withBorder
-                    style={{ 
+                    style={{
                       borderColor: brandColors.lightBrown,
                       cursor: 'pointer',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
                       transition: 'all 0.3s ease',
                       '&:hover': {
                         transform: 'translateY(-4px)',
@@ -306,30 +310,30 @@ const HomePage: React.FC = () => {
                     }}
                     onClick={() => handleGameClick(game.id)}
                   >
-                                         <Card.Section>
-                       <Image
-                         src={game.coverImage || ReactSvg}
-                         height={160}
-                         alt={game.title}
-                         style={{ objectFit: 'cover' }}
-                       />
-                     </Card.Section>
+                    <Card.Section>
+                      <Image
+                        src={game.coverImage || ReactSvg}
+                        height={rem(200)}
+                        alt={game.title}
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </Card.Section>
 
                     <Stack gap="xs" mt="md">
                       <Title order={4} c={brandColors.darkBrown} size="md">
                         {game.title}
                       </Title>
-                      
+
                       <Group gap="xs" wrap="wrap">
-                        <Badge 
-                          color={brandColors.mutedGreen} 
+                        <Badge
+                          color={brandColors.mutedGreen}
                           variant="light"
                           size="sm"
                         >
                           {game.genre}
                         </Badge>
-                        <Badge 
-                          color={brandColors.accent} 
+                        <Badge
+                          color={brandColors.accent}
                           variant="light"
                           size="sm"
                         >
