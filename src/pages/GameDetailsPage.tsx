@@ -423,7 +423,7 @@ export default function GameDetailsPage() {
           <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
             <Grid gutter="xl">
               {/* Left Column: Image and Status */}
-              <Grid.Col span={4}>
+              <Grid.Col span={{ base: 12, md: 4 }}>
                 <Stack gap="lg">
                   {/* Game Cover Image */}
                   {game.coverImage && (
@@ -460,52 +460,76 @@ export default function GameDetailsPage() {
               </Grid.Col>
 
               {/* Right Column: Game Info */}
-              <Grid.Col span={8}>
+              <Grid.Col span={{ base: 12, md: 8 }}>
                 <Stack gap="lg">
                   {/* Header: Rating, Title, Edit Button */}
-                  <Flex justify="space-between" align="flex-start">
-                    <Flex align="center" gap="lg">
-                      {/* Rating Badge */}
-                      <Box
-                        style={{
-                          backgroundColor: '#AAC27A',
-                          padding: '12px 16px',
-                          borderRadius: '12px',
-                          border: `2px solid #AAC27A`,
-                          minWidth: '70px',
-                          textAlign: 'center',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                        }}
-                      >
-                        <Text fw={700} size="xl" c="white">
-                          {game.rating.toFixed(1)}
-                        </Text>
-                      </Box>
+                  <Flex direction="column" gap="md">
+                    {/* Top row: Rating, Title, and Edit Button */}
+                    <Flex justify="space-between" align="flex-start" wrap="wrap" gap="md">
+                      {/* Left side: Rating and Title */}
+                      <Flex align="center" gap="lg" style={{ flex: 1, minWidth: 0 }}>
+                        {/* Rating Badge */}
+                        <Box
+                          style={{
+                            backgroundColor: '#AAC27A',
+                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            border: `2px solid #AAC27A`,
+                            minWidth: '70px',
+                            textAlign: 'center',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Text fw={700} size="xl" c="white">
+                            {game.rating.toFixed(1)}
+                          </Text>
+                        </Box>
 
-                      {/* Game Title */}
-                      <Title order={1} size="2.5rem" c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
-                        {game.title}
-                      </Title>
+                        {/* Game Title - Flexible width */}
+                        <Title 
+                          order={1} 
+                          c={brandColors.darkBrown} 
+                          style={{ 
+                            fontFamily: 'Inter, sans-serif',
+                            wordWrap: 'break-word',
+                            lineHeight: 1.2,
+                            flex: 1,
+                            minWidth: 0,
+                            fontSize: game.title.length > 40 ? '1.8rem' : '2.2rem'
+                          }}
+                          styles={{
+                            root: {
+                              '@media (max-width: 768px)': {
+                                fontSize: game.title.length > 25 ? '1.4rem' : '1.8rem'
+                              }
+                            }
+                          }}
+                        >
+                          {game.title}
+                        </Title>
+                      </Flex>
+
+                      {/* Edit Button - Right side */}
+                      {isAuthenticated && (
+                        <Button
+                          variant="light"
+                          size="md"
+                          style={{
+                            backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige,
+                            borderColor: brandColors.lightBrown,
+                            color: isInWishlist ? 'white' : brandColors.darkBrown,
+                            fontWeight: 600,
+                            padding: '12px 24px',
+                            flexShrink: 0
+                          }}
+                          leftSection={<IconEdit size={18} />}
+                          onClick={() => navigate(`/edit/${game.id}`)}
+                        >
+                          Edit Game
+                        </Button>
+                      )}
                     </Flex>
-
-                    {/* Edit Button */}
-                    {isAuthenticated && (
-                      <Button
-                        variant="light"
-                        size="md"
-                        style={{
-                          backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige,
-                          borderColor: brandColors.lightBrown,
-                          color: isInWishlist ? 'white' : brandColors.darkBrown,
-                          fontWeight: 600,
-                          padding: '12px 24px'
-                        }}
-                        leftSection={<IconEdit size={18} />}
-                        onClick={() => navigate(`/edit/${game.id}`)}
-                      >
-                        Edit Game
-                      </Button>
-                    )}
                   </Flex>
 
                   {/* Game Stats Grid */}
