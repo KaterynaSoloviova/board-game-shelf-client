@@ -26,10 +26,12 @@ import { Game, Tag } from "../interfaces";
 import axios from "axios";
 import { BASE_URL } from "../config";
 import { GameCard } from "../components/GameCard";
+import { useAuth } from "../contexts/AuthContext";
 
 const MyGames: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedPlayers, setSelectedPlayers] = useState<string | null>(null);
@@ -292,9 +294,11 @@ const MyGames: React.FC = () => {
         </Paper>
 
         <Group gap="md" mb="md">
-          <Button color={brandColors.accent} onClick={() => navigate("/addgame")}>
-            Add Game
-          </Button>
+          {isAuthenticated && (
+            <Button color={brandColors.accent} onClick={() => navigate("/addgame")}>
+              Add Game
+            </Button>
+          )}
           <Button
             variant="light"
             onClick={fetchGames}
@@ -333,6 +337,7 @@ const MyGames: React.FC = () => {
                   onEdit={handleEditGame}
                   accentColor={brandColors.accent}
                   mutedColor={brandColors.mutedGreen}
+                  isAuthenticated={isAuthenticated}
                 />
               </Grid.Col>
             ))}

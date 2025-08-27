@@ -5,7 +5,7 @@ import "@mantine/core/styles.css";
 import HomePage from "./pages/HomePage";
 import MyGames from "./pages/MyGames";
 import AddGame from "./pages/AddGame";
-import GameDetailsPage from "./pages/GameDetailsPage"; 
+import GameDetailsPage from "./pages/GameDetailsPage";
 import EditGame from "./pages/EditGame";
 import Wishlist from "./pages/Wishlist";
 import AboutProject from "./pages/AboutProject";
@@ -23,9 +23,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/games" element={
-                <ProtectedRoute>
-                  <MyGames />
-                </ProtectedRoute>
+                <MyGames />
               } />
               <Route path="/addgame" element={
                 <ProtectedRoute>
@@ -33,9 +31,7 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/game/:gameId" element={
-                <ProtectedRoute>
-                  <GameDetailsPage />
-                </ProtectedRoute>
+                <GameDetailsPage />
               } />
               <Route path="/edit/:gameId" element={
                 <ProtectedRoute>
@@ -43,9 +39,7 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/wishlist" element={
-                <ProtectedRoute>
-                  <Wishlist />
-                </ProtectedRoute>
+                <Wishlist />
               } />
               <Route path="/about" element={<AboutProject />} />
             </Routes>

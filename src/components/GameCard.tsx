@@ -31,6 +31,7 @@ interface GameCardProps {
   onEdit?: (gameId: string) => void;
   accentColor?: string;
   mutedColor?: string;
+  isAuthenticated?: boolean;
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
@@ -39,6 +40,7 @@ export const GameCard: React.FC<GameCardProps> = ({
   onDelete,
   onEdit,
   accentColor = "#a87e5b",
+  isAuthenticated = false,
 }) => {
   // Color palette from MyGames page
   const brandColors = {
@@ -238,7 +240,7 @@ export const GameCard: React.FC<GameCardProps> = ({
       </Stack>
 
       <Flex justify="flex-end" gap="xs" mt="md">
-        {onEdit && (
+        {onEdit && isAuthenticated && (
           <Tooltip label="Edit Game">
             <ActionIcon 
               variant="filled" 
@@ -254,20 +256,22 @@ export const GameCard: React.FC<GameCardProps> = ({
             </ActionIcon>
           </Tooltip>
         )}
-        <Tooltip label="Delete Game" color="red">
-          <ActionIcon 
-            variant="filled" 
-            size="sm"
-            style={{
-              backgroundColor: '#B07770',
-              color: 'white',
-              borderColor: '#B07770'
-            }}
-            onClick={handleDeleteClick}
-          >
-            <IconTrash size={16} stroke={1.5} />
-          </ActionIcon>
-        </Tooltip>
+        {isAuthenticated && (
+          <Tooltip label="Delete Game" color="red">
+            <ActionIcon 
+              variant="filled" 
+              size="sm"
+              style={{
+                backgroundColor: '#B07770',
+                color: 'white',
+                borderColor: '#B07770'
+              }}
+              onClick={handleDeleteClick}
+            >
+              <IconTrash size={16} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+        )}
       </Flex>
     </Card>
   );

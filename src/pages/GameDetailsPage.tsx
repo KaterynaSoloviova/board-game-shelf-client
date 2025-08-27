@@ -38,6 +38,7 @@ import {
 
 import { Game, Session, File as GameFile } from "../interfaces";
 import { BASE_URL } from "../config";
+import { useAuth } from "../contexts/AuthContext";
 
 type GameDetails = Game & {
   sessions?: Session[];
@@ -47,6 +48,7 @@ type GameDetails = Game & {
 export default function GameDetailsPage() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   // Color palette from MyGames page
   const brandColors = {
@@ -447,21 +449,23 @@ export default function GameDetailsPage() {
                     </Flex>
 
                     {/* Edit Button */}
-                    <Button
-                      variant="light"
-                      size="md"
-                      style={{
-                        backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige,
-                        borderColor: brandColors.lightBrown,
-                        color: isInWishlist ? 'white' : brandColors.darkBrown,
-                        fontWeight: 600,
-                        padding: '12px 24px'
-                      }}
-                      leftSection={<IconEdit size={18} />}
-                      onClick={() => navigate(`/edit/${game.id}`)}
-                    >
-                      Edit Game
-                    </Button>
+                    {isAuthenticated && (
+                      <Button
+                        variant="light"
+                        size="md"
+                        style={{
+                          backgroundColor: isInWishlist ? brandColors.accent : brandColors.beige,
+                          borderColor: brandColors.lightBrown,
+                          color: isInWishlist ? 'white' : brandColors.darkBrown,
+                          fontWeight: 600,
+                          padding: '12px 24px'
+                        }}
+                        leftSection={<IconEdit size={18} />}
+                        onClick={() => navigate(`/edit/${game.id}`)}
+                      >
+                        Edit Game
+                      </Button>
+                    )}
                   </Flex>
 
                   {/* Game Stats Grid */}
@@ -567,7 +571,7 @@ export default function GameDetailsPage() {
                   )}
 
                   {/* Wishlist Button */}
-                  {!game.isOwned && (
+                  {!game.isOwned && isAuthenticated && (
                     <Box mt="auto" style={{ alignSelf: 'flex-end' }}>
                       <Button
                         variant="light"
@@ -611,22 +615,24 @@ export default function GameDetailsPage() {
           {/* Files Section */}
           <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
             <Flex justify="space-between" align="center" mb="sm">
-              <Title order={3}>Files</Title>
-              <Button
-                variant="light"
-                size="sm"
-                style={{
-                  backgroundColor: brandColors.accent,
-                  borderColor: brandColors.lightBrown,
-                  color: 'white',
-                  fontWeight: 600,
-                  padding: '8px 16px'
-                }}
-                leftSection={<IconPlus size={16} />}
-                onClick={() => setAddFileModalOpen(true)}
-              >
-                Add File
-              </Button>
+              <Title order={3} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>Files</Title>
+              {isAuthenticated && (
+                <Button
+                  variant="light"
+                  size="sm"
+                  style={{
+                    backgroundColor: brandColors.accent,
+                    borderColor: brandColors.lightBrown,
+                    color: 'white',
+                    fontWeight: 600,
+                    padding: '8px 16px'
+                  }}
+                  leftSection={<IconPlus size={16} />}
+                  onClick={() => setAddFileModalOpen(true)}
+                >
+                  Add File
+                </Button>
+              )}
             </Flex>
 
             {files && files.length > 0 ? (
@@ -673,15 +679,17 @@ export default function GameDetailsPage() {
                           Download
                         </Button>
 
-                        <ActionIcon
-                          color="red"
-                          variant="light"
-                          size="sm"
-                          onClick={() => handleDeleteFile(file.id)}
-                          title="Delete file"
-                        >
-                          <IconX size={14} />
-                        </ActionIcon>
+                        {isAuthenticated && (
+                          <ActionIcon
+                            color="red"
+                            variant="light"
+                            size="sm"
+                            onClick={() => handleDeleteFile(file.id)}
+                            title="Delete file"
+                          >
+                            <IconX size={14} />
+                          </ActionIcon>
+                        )}
                       </Group>
                     </Flex>
                   </Paper>
@@ -696,23 +704,27 @@ export default function GameDetailsPage() {
 
           {/* Sessions Section */}
           <Paper shadow="sm" p="lg" radius="md" withBorder style={{ borderColor: brandColors.lightBrown, backgroundColor: '#f0f0eb' }}>
-            <Flex justify="space-between" align="center" mb="sm">
-              <Title order={3}>Sessions</Title>
-              <Button
-                variant="light"
-                size="sm"
-                style={{
-                  backgroundColor: brandColors.accent,
-                  borderColor: brandColors.lightBrown,
-                  color: 'white',
-                  fontWeight: 600,
-                  padding: '8px 16px'
-                }}
-                leftSection={<IconPlus size={16} />}
-                onClick={() => setAddSessionModalOpen(true)}
-              >
-                Add session
-              </Button>
+            <Flex justify="space-between" align="center" mb="md">
+              <Title order={3} c={brandColors.darkBrown} style={{ fontFamily: 'Inter, sans-serif' }}>
+                Game Sessions
+              </Title>
+              {isAuthenticated && (
+                <Button
+                  variant="filled"
+                  size="sm"
+                  style={{
+                    backgroundColor: brandColors.accent,
+                    borderColor: brandColors.lightBrown,
+                    color: 'white',
+                    fontWeight: 600,
+                    padding: '8px 16px'
+                  }}
+                  leftSection={<IconPlus size={16} />}
+                  onClick={() => setAddSessionModalOpen(true)}
+                >
+                  Add session
+                </Button>
+              )}
             </Flex>
 
             {game.sessions && game.sessions.length > 0 ? (
@@ -740,34 +752,36 @@ export default function GameDetailsPage() {
                         {session.notes || "No notes"}
                       </Table.Td>
                       <Table.Td>
-                        <Group gap="xs">
-                          <ActionIcon
-                            variant="filled"
-                            size="sm"
-                            style={{
-                              backgroundColor: brandColors.accent,
-                              color: 'white',
-                              borderColor: brandColors.lightBrown
-                            }}
-                            onClick={() => openEditSession(session)}
-                            title="Edit session"
-                          >
-                            <IconEdit size={16} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="filled"
-                            size="sm"
-                            style={{
-                              backgroundColor: '#B07770',
-                              color: 'white',
-                              borderColor: '#B07770'
-                            }}
-                            onClick={() => handleDeleteSession(session.id)}
-                            title="Delete session"
-                          >
-                            <IconX size={16} />
-                          </ActionIcon>
-                        </Group>
+                        {isAuthenticated && (
+                          <Group gap="xs">
+                            <ActionIcon
+                              variant="filled"
+                              size="sm"
+                              style={{
+                                backgroundColor: brandColors.accent,
+                                color: 'white',
+                                borderColor: brandColors.lightBrown
+                              }}
+                              onClick={() => openEditSession(session)}
+                              title="Edit session"
+                            >
+                              <IconEdit size={16} />
+                            </ActionIcon>
+                            <ActionIcon
+                              variant="filled"
+                              size="sm"
+                              style={{
+                                backgroundColor: '#B07770',
+                                color: 'white',
+                                borderColor: '#B07770'
+                              }}
+                              onClick={() => handleDeleteSession(session.id)}
+                              title="Delete session"
+                            >
+                              <IconX size={16} />
+                            </ActionIcon>
+                          </Group>
+                        )}
                       </Table.Td>
                     </Table.Tr>
                   ))}

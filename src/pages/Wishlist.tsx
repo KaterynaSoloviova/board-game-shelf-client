@@ -1,24 +1,28 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Title,
   Text,
   Stack,
+  Flex,
   Grid,
-  Box,
-  Loader,
-  Center,
-  Alert,
   Paper,
-  Flex
+  Box,
+  Center,
+  Loader,
+  Alert,
 } from '@mantine/core';
-import { IconAlertCircle, IconHeart } from '@tabler/icons-react';
-import axios from 'axios';
-import { BASE_URL } from '../config';
+import { IconHeart, IconAlertCircle } from '@tabler/icons-react';
 import { Game } from '../interfaces';
 import { GameCard } from '../components/GameCard';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+import { BASE_URL } from '../config';
 
-function Wishlist() {
+const Wishlist: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [wishlistGames, setWishlistGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,6 +150,7 @@ function Wishlist() {
                   game={game} 
                   onClick={handleGameClick}
                   onDelete={handleGameDelete}
+                  isAuthenticated={isAuthenticated}
                 />
               </Grid.Col>
             ))}
