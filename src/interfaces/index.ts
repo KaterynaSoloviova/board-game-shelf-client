@@ -51,3 +51,34 @@ export interface File {
   title: string;
   link: string;
 }
+
+export interface User {
+  id: string;
+  email: string;
+  username?: string;
+  createdAt: Date;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface SignupCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  token: string;
+}
+
+export interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  signup: (credentials: SignupCredentials) => Promise<void>;
+  logout: () => void;
+  loading: boolean;
+}

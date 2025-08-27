@@ -10,23 +10,47 @@ import EditGame from "./pages/EditGame";
 import Wishlist from "./pages/Wishlist";
 import AboutProject from "./pages/AboutProject";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <MantineProvider>
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/games" element={<MyGames />} />
-            <Route path="/addgame" element={<AddGame />} />
-            <Route path="/game/:gameId" element={<GameDetailsPage />} />
-            <Route path="/edit/:gameId" element={<EditGame />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/about" element={<AboutProject />} />
-          </Routes>
-          <Footer />
+          <AuthProvider>
+            <Header />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/games" element={
+                <ProtectedRoute>
+                  <MyGames />
+                </ProtectedRoute>
+              } />
+              <Route path="/addgame" element={
+                <ProtectedRoute>
+                  <AddGame />
+                </ProtectedRoute>
+              } />
+              <Route path="/game/:gameId" element={
+                <ProtectedRoute>
+                  <GameDetailsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/edit/:gameId" element={
+                <ProtectedRoute>
+                  <EditGame />
+                </ProtectedRoute>
+              } />
+              <Route path="/wishlist" element={
+                <ProtectedRoute>
+                  <Wishlist />
+                </ProtectedRoute>
+              } />
+              <Route path="/about" element={<AboutProject />} />
+            </Routes>
+            <Footer />
+          </AuthProvider>
         </MantineProvider>
       </BrowserRouter>
     </>
