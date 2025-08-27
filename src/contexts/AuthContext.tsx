@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       console.log('Attempting signup with:', { email: credentials.email });
       
-      const response = await fetch(`${BASE_URL}/api/signup`, {
+      const signupResponse = await fetch(`${BASE_URL}/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,21 +191,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify(credentials),
       });
 
-      console.log('Signup response status:', response.status);
+      console.log('Signup response status:', signupResponse.status);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Signup failed with status:', response.status, 'Error:', errorData);
+      if (!signupResponse.ok) {
+        const errorData = await signupResponse.json();
+        console.error('Signup failed with status:', signupResponse.status, 'Error:', errorData);
         throw new Error(errorData.message || 'Signup failed');
       }
+      const signupData = await signupResponse.json();
+      let userData = signupData.user || signupData.userData || signupData.userInfo;
 
+      const response = await fetch(`${BASE_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
       const data = await response.json();
       console.log('Signup response data:', data);
       console.log('Signup response data keys:', Object.keys(data));
       
       // Try to find the token in different possible field names
       let token = data.token || data.accessToken || data.jwt || data.authToken || data.access_token;
-      let userData = data.user || data.userData || data.userInfo;
       
       console.log('Extracted token:', token ? 'Found' : 'Missing');
       console.log('Extracted user data:', userData ? 'Found' : 'Missing');
