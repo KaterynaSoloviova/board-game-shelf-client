@@ -39,6 +39,7 @@ import {
 import { Game, Session, File as GameFile } from "../interfaces";
 import { BASE_URL } from "../config";
 import { useAuth } from "../contexts/AuthContext";
+import { apiRequest } from "../utils/api";
 
 type GameDetails = Game & {
   sessions?: Session[];
@@ -155,11 +156,18 @@ export default function GameDetailsPage() {
         players.push({ name: selectedExistingPlayer });
       }
 
-      await axios.post(`${BASE_URL}/api/games/${gameId}/sessions/`, {
-        date: sessionDate,
-        notes: sessionNotes,
-        players,
+      const response = await apiRequest(`/api/games/${gameId}/sessions/`, {
+        method: "POST",
+        body: JSON.stringify({
+          date: sessionDate,
+          notes: sessionNotes,
+          players,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to add session");
+      }
 
       await fetchSessions(gameId);
       resetSessionForm();
@@ -177,11 +185,17 @@ export default function GameDetailsPage() {
         players.push({ name: selectedExistingPlayer });
       }
 
-      await axios.put(`${BASE_URL}/api/sessions/${editingSession.id}`, {
-        date: sessionDate,
-        notes: sessionNotes,
-        players,
+      const response = await apiRequest(`/api/sessions/${editingSession.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          date: sessionDate,
+          notes: sessionNotes,
+          players,
+        }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to edit session");
+      }
 
       await fetchSessions(gameId);
       resetSessionForm();
@@ -194,7 +208,12 @@ export default function GameDetailsPage() {
     if (!gameId) return;
 
     try {
-      await axios.delete(`${BASE_URL}/api/sessions/${sessionId}`);
+      const response = await apiRequest(`/api/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete session");
+      }
       await fetchSessions(gameId);
     } catch (error) {
       console.error("Failed to delete session:", error);
@@ -250,10 +269,16 @@ export default function GameDetailsPage() {
     if (!gameId || !fileTitle.trim() || !fileLink) return;
 
     try {
-      await axios.post(`${BASE_URL}/api/games/${gameId}/files`, {
-        title: fileTitle,
-        link: fileLink,
+      const response = await apiRequest(`/api/games/${gameId}/files`, {
+        method: "POST",
+        body: JSON.stringify({
+          title: fileTitle,
+          link: fileLink,
+        }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to add file");
+      }
 
       await fetchFiles(gameId);
       resetFileForm();
@@ -266,7 +291,12 @@ export default function GameDetailsPage() {
     if (!gameId) return;
 
     try {
-      await axios.delete(`${BASE_URL}/api/files/${fileId}`);
+      const response = await apiRequest(`/api/files/${fileId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete file");
+      }
       await fetchFiles(gameId);
     } catch (error) {
       console.error("Failed to delete file:", error);
@@ -330,13 +360,23 @@ export default function GameDetailsPage() {
     try {
       if (isInWishlist) {
         // Remove from wishlist
-        await axios.post(`${BASE_URL}/api/games/${gameId}/removeWishlist`);
+        const response = await apiRequest(`/api/games/${gameId}/removeWishlist`, {
+          method: "POST",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to remove from wishlist");
+        }
         setIsInWishlist(false);
         localStorage.setItem(`wishlist_${gameId}`, 'false');
         console.log('Removed from wishlist:', game.title);
       } else {
         // Add to wishlist
-        await axios.post(`${BASE_URL}/api/games/${gameId}/addWishlist`);
+        const response = await apiRequest(`/api/games/${gameId}/addWishlist`, {
+          method: "POST",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add to wishlist");
+        }
         setIsInWishlist(true);
         localStorage.setItem(`wishlist_${gameId}`, 'true');
         console.log('Added to wishlist:', game.title);

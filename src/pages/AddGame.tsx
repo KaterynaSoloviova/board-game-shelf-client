@@ -46,14 +46,14 @@ import {
   IconHeartFilled,
   IconX,
 } from "@tabler/icons-react";
-import axios from "axios";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import Strike from "@tiptap/extension-strike";
-import { BASE_URL, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from "../config";
+import { CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from "../config";
 import { useTags } from "../hooks/useTags";
+import { apiRequest } from "../utils/api";
 
 export const AddGame: React.FC = () => {
   const navigate = useNavigate();
@@ -146,22 +146,28 @@ export const AddGame: React.FC = () => {
     }
 
     try {
-      await axios.post(`${BASE_URL}/api/games/`, {
-        title,
-        description,
-        genre,
-        minPlayers,
-        maxPlayers,
-        playTime,
-        publisher,
-        age,
-        rating,
-        myRating,
-        coverImage,
-        isOwned,
-        tags: tags.map((t) => ({ title: t })),
-        createdAt: new Date(),
+      const response = await apiRequest("/api/games/", {
+        method: "POST",
+        body: JSON.stringify({
+          title,
+          description,
+          genre,
+          minPlayers,
+          maxPlayers,
+          playTime,
+          publisher,
+          age,
+          rating,
+          myRating,
+          coverImage,
+          isOwned,
+          tags: tags.map((t) => ({ title: t })),
+          createdAt: new Date(),
+        }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to add game");
+      }
       navigate("/games");
     } catch (error) {
       console.error(error);

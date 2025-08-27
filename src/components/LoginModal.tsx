@@ -8,7 +8,6 @@ import {
   Text,
   Stack,
   Alert,
-  LoadingOverlay,
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useAuth } from '../contexts/AuthContext';

@@ -27,6 +27,7 @@ import axios from "axios";
 import { BASE_URL } from "../config";
 import { GameCard } from "../components/GameCard";
 import { useAuth } from "../contexts/AuthContext";
+import { apiRequest } from "../utils/api";
 
 const MyGames: React.FC = () => {
   const navigate = useNavigate();
@@ -176,7 +177,12 @@ const MyGames: React.FC = () => {
 
   const handleDeleteGame = async (gameId: string) => {
     try {
-      await axios.delete(`${BASE_URL}/api/games/${gameId}/`);
+      const response = await apiRequest(`/api/games/${gameId}/`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete game");
+      }
       setGames((prev) => prev.filter((game) => game.id !== gameId));
     } catch (error) {
       console.error("Failed to delete game:", error);

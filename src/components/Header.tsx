@@ -8,7 +8,7 @@ import {
   Group,
   Image,
 } from '@mantine/core';
-import { IconLogin, IconLogout, IconUser } from '@tabler/icons-react';
+import { IconLogin, IconLogout} from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthPersistence } from '../hooks/useAuthPersistence';

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Title,
@@ -21,7 +20,6 @@ import axios from 'axios';
 import { BASE_URL } from '../config';
 
 const Wishlist: React.FC = () => {
-  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [wishlistGames, setWishlistGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);

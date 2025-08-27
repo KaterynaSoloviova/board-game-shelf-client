@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AuthContextType, User, LoginCredentials, SignupCredentials, AuthResponse } from '../interfaces';
+import { AuthContextType, User, LoginCredentials, SignupCredentials} from '../interfaces';
 import { BASE_URL } from '../config';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

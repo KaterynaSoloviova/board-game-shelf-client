@@ -56,6 +56,7 @@ import Strike from "@tiptap/extension-strike";
 import { BASE_URL, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_URL } from "../config";
 import { Game } from "../interfaces";
 import { useTags } from "../hooks/useTags";
+import { apiRequest } from "../utils/api";
 
 export const EditGame: React.FC = () => {
   const navigate = useNavigate();
@@ -196,22 +197,28 @@ export const EditGame: React.FC = () => {
     if (!gameId) return;
 
     try {
-      await axios.put(`${BASE_URL}/api/games/${gameId}`, {
-        title,
-        description,
-        genre,
-        minPlayers,
-        maxPlayers,
-        playTime,
-        publisher,
-        age,
-        rating,
-        myRating,
-        coverImage,
-        isOwned,
-        tags: tags.map((t) => ({ title: t })),
-        updatedAt: new Date(),
+      const response = await apiRequest(`/api/games/${gameId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          title,
+          description,
+          genre,
+          minPlayers,
+          maxPlayers,
+          playTime,
+          publisher,
+          age,
+          rating,
+          myRating,
+          coverImage,
+          isOwned,
+          tags: tags.map((t) => ({ title: t })),
+          updatedAt: new Date(),
+        }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to update game");
+      }
       navigate(`/game/${gameId}`);
     } catch (error) {
       console.error(error);

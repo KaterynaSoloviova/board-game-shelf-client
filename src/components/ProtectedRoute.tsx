@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LoadingOverlay, Container, Text, Button, Stack, Center } from '@mantine/core';
+import { LoadingOverlay, Container, Text, Stack, Center } from '@mantine/core';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
