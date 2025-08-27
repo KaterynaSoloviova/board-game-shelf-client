@@ -95,8 +95,8 @@ const Wishlist: React.FC = () => {
           <Flex justify="space-between" align="center">
             <Stack gap="xs">
               <Flex align="center" gap="sm">
-                <IconHeart 
-                  size={32} 
+                <IconHeart
+                  size={32}
                   color="#9A6A63"
                   style={{ filter: 'drop-shadow(0 2px 4px rgba(99, 88, 65, 0.2))' }}
                 />
@@ -125,38 +125,38 @@ const Wishlist: React.FC = () => {
       <Container size="xl" py="xl">
         <Stack gap="xl">
 
-        {/* Games Grid */}
-        {wishlistGames.length === 0 ? (
-          <Paper
-            p="xl"
-            style={{
-              backgroundColor: '#f0f0eb',
-              border: `1px solid ${brandColors.lightBrown}`,
-              borderRadius: '12px',
-              textAlign: 'center'
-            }}
-          >
-            <Text size="lg" c={brandColors.mutedGreen} style={{ fontFamily: 'Inter, sans-serif' }}>
-              Your wishlist is empty. Start adding games you'd like to own!
-            </Text>
-          </Paper>
-        ) : (
-          <Grid gutter="lg">
-            {wishlistGames.map((game) => (
-              <Grid.Col key={game.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
-                <GameCard 
-                  game={game} 
-                  onClick={handleGameClick}
-                  onDelete={handleGameDelete}
-                  isAuthenticated={isAuthenticated}
-                />
-              </Grid.Col>
-            ))}
-          </Grid>
-        )}
-      </Stack>
-    </Container>
-  </Box>
+          {/* Games Grid */}
+          {wishlistGames.length === 0 ? (
+            <Paper
+              p="xl"
+              style={{
+                backgroundColor: '#f0f0eb',
+                border: `1px solid ${brandColors.lightBrown}`,
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}
+            >
+              <Text size="lg" c={brandColors.mutedGreen} style={{ fontFamily: 'Inter, sans-serif' }}>
+                Your wishlist is empty. Start adding games you'd like to own!
+              </Text>
+            </Paper>
+          ) : (
+            <Grid gutter="lg">
+              {wishlistGames.map((game) => (
+                <Grid.Col key={game.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+                  <GameCard
+                    game={game}
+                    onClick={handleGameClick}
+                    onDelete={handleGameDelete}
+                    isAuthenticated={isAuthenticated}
+                  />
+                </Grid.Col>
+              ))}
+            </Grid>
+          )}
+        </Stack>
+      </Container>
+    </Box>
   );
 }
 

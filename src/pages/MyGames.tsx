@@ -54,24 +54,7 @@ const MyGames: React.FC = () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}/api/games/`);
-      const gamesWithSessions = await Promise.all(
-        response.data.map(async (game: Game) => {
-          try {
-            const sessionsResponse = await axios.get(`${BASE_URL}/api/games/${game.id}/sessions`);
-            return {
-              ...game,
-              sessions: sessionsResponse.data || []
-            };
-          } catch (error) {
-            console.error(`Failed to fetch sessions for game ${game.title}:`, error);
-            return {
-              ...game,
-              sessions: []
-            };
-          }
-        })
-      );
-      setGames(gamesWithSessions);
+      setGames(response.data);
     } catch (error) {
       console.error("Failed to fetch games:", error);
     } finally {
@@ -200,8 +183,8 @@ const MyGames: React.FC = () => {
         <Container size="xl">
           <Flex justify="space-between" align="center">
             <Flex align="center" gap="sm">
-              <IconChess 
-                size={32} 
+              <IconChess
+                size={32}
                 color="#9A6A63"
                 style={{ filter: 'drop-shadow(0 2px 4px rgba(99, 88, 65, 0.2))' }}
               />

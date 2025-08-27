@@ -64,7 +64,7 @@ export const GameCard: React.FC<GameCardProps> = ({
     genre: game?.genre || "Unknown",
     coverImage: game?.coverImage || "",
     myRating: game?.myRating,
-    sessions: game?.sessions || [],
+    sessions: game?._count?.sessions || 0,
     tags: game?.tags || [],
     isOwned: game?.isOwned || false,
   };
@@ -167,13 +167,13 @@ export const GameCard: React.FC<GameCardProps> = ({
           <Group gap={rem(4)}>
             <IconCalendarEvent size={16} stroke={1.5} color={brandColors.darkBrown} />
             <Text size="sm" c={brandColors.darkBrown}>
-              {safeGame.sessions.length} sessions
+              {safeGame.sessions} sessions
             </Text>
           </Group>
         </Group>
 
         <Group gap="xs" wrap="wrap">
-          <Badge 
+          <Badge
             size="sm"
             style={{
               backgroundColor: '#99B5A3',
@@ -187,8 +187,8 @@ export const GameCard: React.FC<GameCardProps> = ({
             {safeGame.genre}
           </Badge>
           {safeGame.tags?.slice(0, 3).map((tag: Tag, index: number) => (
-            <Badge 
-              key={tag.id || index} 
+            <Badge
+              key={tag.id || index}
               size="sm"
               style={{
                 backgroundColor: '#99B5A3',
@@ -203,7 +203,7 @@ export const GameCard: React.FC<GameCardProps> = ({
             </Badge>
           ))}
           {safeGame.tags.length > 3 && (
-            <Badge 
+            <Badge
               size="sm"
               style={{
                 backgroundColor: '#99B5A3',
@@ -242,8 +242,8 @@ export const GameCard: React.FC<GameCardProps> = ({
       <Flex justify="flex-end" gap="xs" mt="md">
         {onEdit && isAuthenticated && (
           <Tooltip label="Edit Game">
-            <ActionIcon 
-              variant="filled" 
+            <ActionIcon
+              variant="filled"
               size="sm"
               style={{
                 backgroundColor: brandColors.accent,
@@ -258,8 +258,8 @@ export const GameCard: React.FC<GameCardProps> = ({
         )}
         {isAuthenticated && (
           <Tooltip label="Delete Game" color="red">
-            <ActionIcon 
-              variant="filled" 
+            <ActionIcon
+              variant="filled"
               size="sm"
               style={{
                 backgroundColor: '#B07770',

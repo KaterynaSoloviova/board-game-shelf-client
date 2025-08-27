@@ -226,13 +226,13 @@ export default function GameDetailsPage() {
     // Backend sends dates as strings, so we need to handle that
     const dateValue = session.date as any; // Type assertion to handle backend data
     let formattedDate = "";
-    
+
     if (typeof dateValue === 'string') {
       formattedDate = dateValue.split('T')[0];
     } else if (dateValue instanceof Date) {
       formattedDate = dateValue.toISOString().split('T')[0];
     }
-    
+
     setSessionDate(formattedDate);
     setSessionNotes(session.notes || "");
     setSelectedPlayers(session.players?.map(p => p.name) || []);
@@ -487,10 +487,10 @@ export default function GameDetailsPage() {
                         </Box>
 
                         {/* Game Title - Flexible width */}
-                        <Title 
-                          order={1} 
-                          c={brandColors.darkBrown} 
-                          style={{ 
+                        <Title
+                          order={1}
+                          c={brandColors.darkBrown}
+                          style={{
                             fontFamily: 'Inter, sans-serif',
                             wordWrap: 'break-word',
                             lineHeight: 1.2,
